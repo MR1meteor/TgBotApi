@@ -20,7 +20,7 @@ namespace TgBotApi.Repositories
         
         public async Task<bool> Add(Credentials creds)
         {
-            var query = $@"insert into {TABLE_NAME} ""({nameof(Credentials.Name)}"", ""{nameof(Credentials.UserId)}"", ""{nameof(Credentials.Host)}"",
+            var query = $@"insert into {TABLE_NAME} ""{nameof(Credentials.Name)}"", ""{nameof(Credentials.UserId)}"", ""{nameof(Credentials.Host)}"",
                             ""{nameof(Credentials.Port)}"", ""{nameof(Credentials.Database)}"", ""{nameof(Credentials.Username)}"", ""{nameof(Credentials.Password)}"")
                             values (@name, @userId, @host, @port, @database, @username, @password)
                             returning *";
