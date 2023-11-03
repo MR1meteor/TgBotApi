@@ -30,6 +30,7 @@ builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<ICredentialsRepository, CredentialsRepository>();
 builder.Services.AddScoped<IVisualService, VisualService>();
+builder.Services.AddScoped<IMetricRepository, MetricRepository>();
 
 var app = builder.Build();
 
