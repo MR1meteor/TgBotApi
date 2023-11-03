@@ -6,6 +6,7 @@ namespace TgBotApi.Repositories.Interfaces
     {
         Task<bool> Add(Credentials creds);
         Task<Credentials?> Get(string dbname, long userId);
-        Task<List<Credentials>> GetByUser(long userId);
+        Task<AllCredentials> GetByUser(long userId);
+        Task<AllCredentials> GetAllCredentials();
     }
 }

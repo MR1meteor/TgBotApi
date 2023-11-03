@@ -20,7 +20,10 @@ namespace TgBotApi.Controllers
         public async Task<IActionResult> GetCredentials(long userId)
         {
             var result = await credentialsRepository.GetByUser(userId);
-
+            if (result.Error != null)
+            {
+                return StatusCode(500, result);
+            }
             return Ok(result);
         }
 

@@ -13,6 +13,7 @@
 
     public class AllCredentials
     {
-        private List<Credentials> CredentialsList { get; set; }
+        public List<Credentials> CredentialsList { get; set; }
+        public string Error { get; set; }
     }
 }

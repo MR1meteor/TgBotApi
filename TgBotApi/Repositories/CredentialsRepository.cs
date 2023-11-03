@@ -10,10 +10,12 @@ namespace TgBotApi.Repositories
     {
         private const string TABLE_NAME = @"public.credentials";
         private readonly DapperContext context;
+        private readonly ILogger<CredentialsRepository> logger;
 
-        public CredentialsRepository(DapperContext context)
+        public CredentialsRepository(DapperContext context, ILogger<CredentialsRepository> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
         
         public async Task<bool> Add(Credentials creds)
@@ -50,18 +52,47 @@ namespace TgBotApi.Repositories
             }
         }
 
-        public async Task<List<Credentials>> GetByUser(long userId)
+        public async Task<AllCredentials> GetByUser(long userId)
         {
-            var query = $@"select * from {TABLE_NAME} where {nameof(Credentials.UserId)} = @userId";
-
+            var query = $@"select * from {TABLE_NAME} where ""{nameof(Credentials.UserId)}"" = @userId";
+            var allCredentials = new AllCredentials();
+            
             var queryArgs = new { UserId = userId };
 
-            using (var connection = context.CreateDefaultConnection())
+            using var connection = context.CreateDefaultConnection();
+            try
             {
                 var response = await connection.QueryAsync<Credentials>(query, queryArgs);
-
-                return response.ToList();
+                allCredentials.CredentialsList = response.ToList();
             }
+            catch (Exception ex)
+            {
+                allCredentials.CredentialsList = null;
+                allCredentials.Error = ex.Message;
+                
+                logger.LogError(ex.ToString());
+            }
+
+            return allCredentials;
+        }
+        
+        public async Task<AllCredentials> GetAllCredentials()
+        {
+            var query = @"select * from Credentials;";
+            var allCredentials = new AllCredentials();
+            
+            using var connection = context.CreateDefaultConnection();
+            try
+            {
+                var allCredentialsResponse = await connection.QueryAsync<Credentials>(query);
+                allCredentials.CredentialsList = allCredentialsResponse.ToList();
+            }
+            catch (Exception ex)
+            {
+                allCredentials.CredentialsList = null;
+                allCredentials.Error = ex.Message;
+            }
+            return allCredentials;
         }
     }
 }
