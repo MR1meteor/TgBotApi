@@ -17,10 +17,11 @@ namespace TgBotApi.Repositories
             this.context = context;
             this.logger = logger;
         }
-        
+
         public async Task<bool> Add(Credentials creds)
         {
-            var query = $@"insert into {TABLE_NAME} ""{nameof(Credentials.Name)}"", ""{nameof(Credentials.UserId)}"", ""{nameof(Credentials.Host)}"",
+            var query =
+                $@"insert into {TABLE_NAME}(""{nameof(Credentials.Name)}"", ""{nameof(Credentials.UserId)}"", ""{nameof(Credentials.Host)}"",
                             ""{nameof(Credentials.Port)}"", ""{nameof(Credentials.Database)}"", ""{nameof(Credentials.Username)}"", ""{nameof(Credentials.Password)}"")
                             values (@name, @userId, @host, @port, @database, @username, @password)
                             returning *";
@@ -28,7 +29,7 @@ namespace TgBotApi.Repositories
             using (var connection = context.CreateDefaultConnection())
             {
                 var response = await connection.QueryAsync<Credentials>(query, creds);
-                
+
                 if (response.FirstOrDefault() != null)
                 {
                     return true;
@@ -40,7 +41,8 @@ namespace TgBotApi.Repositories
 
         public async Task<Credentials?> Get(string name, long userId)
         {
-            var query = $@"select * from {TABLE_NAME} where ""{nameof(Credentials.Name)}"" = @name and ""{nameof(Credentials.UserId)}"" = @userId";
+            var query =
+                $@"select * from {TABLE_NAME} where ""{nameof(Credentials.Name)}"" = @name and ""{nameof(Credentials.UserId)}"" = @userId";
 
             var queryArgs = new { Name = name, UserId = userId };
 
@@ -56,7 +58,7 @@ namespace TgBotApi.Repositories
         {
             var query = $@"select * from {TABLE_NAME} where ""{nameof(Credentials.UserId)}"" = @userId";
             var allCredentials = new AllCredentials();
-            
+
             var queryArgs = new { UserId = userId };
 
             using var connection = context.CreateDefaultConnection();
@@ -69,18 +71,18 @@ namespace TgBotApi.Repositories
             {
                 allCredentials.CredentialsList = null;
                 allCredentials.Error = ex.Message;
-                
+
                 logger.LogError(ex.ToString());
             }
 
             return allCredentials;
         }
-        
+
         public async Task<AllCredentials> GetAllCredentials()
         {
             var query = @"select * from Credentials;";
             var allCredentials = new AllCredentials();
-            
+
             using var connection = context.CreateDefaultConnection();
             try
             {
@@ -92,6 +94,7 @@ namespace TgBotApi.Repositories
                 allCredentials.CredentialsList = null;
                 allCredentials.Error = ex.Message;
             }
+
             return allCredentials;
         }
     }
