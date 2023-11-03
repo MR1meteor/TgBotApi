@@ -32,6 +32,7 @@ namespace TgBotApi.Controllers
             return Ok(states);
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetAllStates()
         {
             return Ok();
