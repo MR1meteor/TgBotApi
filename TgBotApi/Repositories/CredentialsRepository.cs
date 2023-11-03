@@ -10,12 +10,10 @@ namespace TgBotApi.Repositories
     {
         private const string TABLE_NAME = @"public.credentials";
         private readonly DapperContext context;
-        private readonly IDbConnection connection;
 
         public CredentialsRepository(DapperContext context)
         {
             this.context = context;
-            connection = context.GetDefaultConnection();
         }
         
         public async Task<bool> Add(Credentials creds)
@@ -25,14 +23,17 @@ namespace TgBotApi.Repositories
                             values (@name, @userId, @host, @port, @database, @username, @password)
                             returning *";
 
-            var response = await connection.QueryAsync<Credentials>(query, creds);
-                
-            if (response.FirstOrDefault() != null)
+            using (var connection = context.CreateDefaultConnection())
             {
-                return true;
-            }
+                var response = await connection.QueryAsync<Credentials>(query, creds);
+                
+                if (response.FirstOrDefault() != null)
+                {
+                    return true;
+                }
 
-            return false;
+                return false;
+            }
         }
 
         public async Task<Credentials?> Get(string name, long userId)
@@ -41,9 +42,12 @@ namespace TgBotApi.Repositories
 
             var queryArgs = new { Name = name, UserId = userId };
 
-            var response = await connection.QueryAsync<Credentials>(query, queryArgs);
+            using (var connection = context.CreateDefaultConnection())
+            {
+                var response = await connection.QueryAsync<Credentials>(query, queryArgs);
 
-            return response.FirstOrDefault();
+                return response.FirstOrDefault();
+            }
         }
 
         public async Task<List<Credentials>> GetByUser(long userId)
@@ -52,20 +56,12 @@ namespace TgBotApi.Repositories
 
             var queryArgs = new { UserId = userId };
 
-            var response = await connection.QueryAsync<Credentials>(query, queryArgs);
+            using (var connection = context.CreateDefaultConnection())
+            {
+                var response = await connection.QueryAsync<Credentials>(query, queryArgs);
 
-            return response.ToList();
-        }
-
-        public async Task CreateAllConnections()
-        {
-            var query = $@"select * from ""Credentials"";";
-
-                var allCredentials = await this.connection.QueryAsync<AllCredentials>(query);
-
-                foreach (var credential in allCredentials)
-                {
-                }
+                return response.ToList();
+            }
         }
     }
 }
