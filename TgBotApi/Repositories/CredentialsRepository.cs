@@ -97,5 +97,18 @@ namespace TgBotApi.Repositories
 
             return allCredentials;
         }
+
+        public async Task<Credentials?> GetById(int id)
+        {
+            var query = $@"select * from {TABLE_NAME} where ""Id"" = @id";
+            var queryArgs = new { Id = id };
+
+            using (var connection = context.CreateDefaultConnection())
+            {
+                var response = await connection.QueryAsync<Credentials>(query, queryArgs);
+
+                return response?.FirstOrDefault();
+            }
+        }
     }
 }
