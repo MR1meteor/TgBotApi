@@ -8,14 +8,24 @@ namespace TgBotApi.Services
 {
     public class VisualService : IVisualService
     {
+        private readonly ILogger<VisualService> logger;
+
+        public VisualService(ILogger<VisualService> logger)
+        {
+            this.logger = logger;
+        }
+
         public async Task<string> GetByLink(string link)
         {
             var options = new ChromeOptions();
             options.AddArgument("no-sandbox");
             options.AddArgument("headless");
+            options.AddArguments("--window-size=1440,1080");
             var driver = new RemoteWebDriver(new Uri("http://selenium-hub:4444/wd/hub"), options);
 
-            driver.Navigate().GoToUrl("https://www.google.com");
+            var normalUrl = System.Web.HttpUtility.UrlDecode(link);
+
+            driver.Navigate().GoToUrl(normalUrl);
 
             Screenshot? screenshot = null;
             try

@@ -28,9 +28,20 @@ namespace TgBotApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCredentials(Credentials credentials)
+        public async Task<IActionResult> AddCredentials(CredentialsDto credentials)
         {
-            var result = await credentialsRepository.Add(credentials);
+            var creds = new Credentials
+            {
+                Name = credentials.Name,
+                UserId = credentials.UserId,
+                Host = credentials.Host,
+                Port = credentials.Port,
+                Database = credentials.Database,
+                Username = credentials.Username,
+                Password = credentials.Password,
+            };
+
+            var result = await credentialsRepository.Add(creds);
 
             if (result)
             {

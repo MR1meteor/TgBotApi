@@ -19,7 +19,8 @@ create table if not exists links
         constraint "credentialId_fk"
             references credentials
             on delete set null,
-    "Url"         varchar
+    "Url"         varchar,
+    "Name"        varchar
 );
 
 create table if not exists queries

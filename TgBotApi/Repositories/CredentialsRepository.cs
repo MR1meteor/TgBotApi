@@ -128,9 +128,9 @@ namespace TgBotApi.Repositories
             }
         }
 
-        public async Task<Credentials?> GetByIdAndName(int id, string name)
+        public async Task<Credentials?> GetByIdAndName(long userId, string name)
         {
-            var query = $@"select * from {TABLE_NAME} where ""UserId""={id} and ""Name""='{name}'";
+            var query = $@"select * from {TABLE_NAME} where ""UserId""={userId} and ""Name""='{name}'";
             using var connection = context.CreateDefaultConnection();
             {
                 var response = await connection.QueryAsync<Credentials>(query);

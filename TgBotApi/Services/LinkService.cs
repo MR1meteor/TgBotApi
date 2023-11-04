@@ -1,4 +1,5 @@
-﻿using TgBotApi.Models;
+﻿using System.Text.RegularExpressions;
+using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;
 using TgBotApi.Services.Interfaces;
 
@@ -13,12 +14,15 @@ namespace TgBotApi.Services
             this.linkRepository = linkRepository;
         }
 
-        public async Task<LinkModel?> AddLink(LinkDto model)
+        public async Task<LinkModel?> AddLink(int credentialId, string url, string name)
         {
+            var validLink = System.Web.HttpUtility.UrlDecode(url);
+
             var newLinkModel = new LinkModel
             {
-                CredentialId = model.CredentialId,
-                Url = model.Url,
+                CredentialId = credentialId,
+                Url = validLink,
+                Name = name
             };
 
             return await linkRepository.Add(newLinkModel);
@@ -32,6 +36,23 @@ namespace TgBotApi.Services
         public async Task<LinkModel?> GetByid(int id)
         {
             return await linkRepository.Get(id);
+        }
+
+        public async Task<LinkModel?> GetByCredentialsAndName(int credentialsId, string name)
+        {
+            return await linkRepository.GetByCredentialsAndName(credentialsId, name);
+        }
+
+        public bool ValidateLink(string link)
+        {
+            var url = System.Web.HttpUtility.UrlDecode(link);
+
+            var pattern = "^[https://|http://]";
+            var regex = new Regex(pattern);
+
+            var match = regex.Match(url);
+
+            return match.Success;
         }
     }
 }

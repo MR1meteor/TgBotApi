@@ -7,5 +7,6 @@ namespace TgBotApi.Repositories.Interfaces
         Task<LinkModel?> Add(LinkModel linkModel);
         Task<LinkModel?> Get(int id);
         Task<List<LinkModel>> GetAllByCredential(int credentialId);
+        Task<LinkModel?> GetByCredentialsAndName(int credentialsId, string name);
     }
 }
