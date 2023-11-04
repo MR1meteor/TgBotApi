@@ -61,7 +61,8 @@ public class SshRepository : ISshRepository
 
         using (var connection = _context.CreateDefaultConnection())
         {
-            return await connection<List<SshQuery>>(query, queryArgs);
+            var res = await connection.QueryAsync<SshQuery>(query, queryArgs);
+            return res.ToList();
         }
 
         throw new NotImplementedException();
