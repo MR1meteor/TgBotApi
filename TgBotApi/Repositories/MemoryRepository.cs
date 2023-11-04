@@ -1,4 +1,5 @@
-﻿using System.Drawing.Printing;
+﻿using System.Diagnostics;
+using System.Drawing.Printing;
 using Dapper;
 using TgBotApi.Data;
 using TgBotApi.Models;
@@ -52,6 +53,31 @@ public class MemoryRepository: IMemoryRepository
             memoryCorrelations.EffectiveCacheSize = await connection.QueryFirstOrDefaultAsync<string>(@"show effective_cache_size");
             memoryCorrelations.MemoryLimit  = await connection.QueryFirstOrDefaultAsync<string>(@"show Shared_buffers ");
             return memoryCorrelations;
+        }
+    }
+
+    public async Task<string?> CreateDatabaseDump(int userId, string name)
+    {
+        try
+        {
+
+            var credentials = await credentialsRepository.GetByIdAndName(userId, name);
+            var commandLine = string.Format($"pg_dump -h {credentials.Host} -U {credentials.Username} -W {credentials.Password} {credentials.Database} > mysql.sql");
+
+            using (var process = new Process())
+            {
+                process.StartInfo = new ProcessStartInfo {
+                    FileName = "/bin/bash",
+                    Arguments = string.Format( "/c \"{0}\"", commandLine)
+                };
+                process.Start();
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return ex.ToString();
         }
     }
 }
