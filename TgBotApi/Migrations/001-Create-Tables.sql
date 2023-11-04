@@ -17,3 +17,14 @@ create table if not exists Users
         primary key,
     "UserId"   bigint
 );
+
+create table if not exists links
+(
+    "Id"           serial
+        primary key,
+    "CredentialId" integer
+        constraint "credentialId_fk"
+            references credentials
+            on delete set null,
+    "Url"         varchar
+);
