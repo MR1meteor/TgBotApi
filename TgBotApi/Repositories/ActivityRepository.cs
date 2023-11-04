@@ -40,6 +40,11 @@ namespace TgBotApi.Repositories
                 }
             }
 
+            for (int i = 0; i < response.Count; i++)
+            {
+                response[i].userId = credentials.UserId;
+            }
+
             return response;
         } 
         
