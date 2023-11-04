@@ -10,9 +10,12 @@ namespace TgBotApi.Services
     {
         public async Task<string> GetByLink(string link)
         {
-            var driver = new RemoteWebDriver(new Uri("http://selenium-hub:4444/wd/hub"), new ChromeOptions());
+            var options = new ChromeOptions();
+            options.AddArgument("no-sandbox");
+            options.AddArgument("headless");
+            var driver = new RemoteWebDriver(new Uri("http://selenium-hub:4444/wd/hub"), options);
 
-            driver.Navigate().GoToUrl(link);
+            driver.Navigate().GoToUrl("https://www.google.com");
 
             Screenshot? screenshot = null;
             try
