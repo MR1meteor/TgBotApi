@@ -20,6 +20,7 @@ services:
       dockerfile: Dockerfile
     networks:
       - backend
+      - hub_network
     depends_on:
       - database
     restart: always
