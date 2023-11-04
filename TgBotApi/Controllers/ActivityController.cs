@@ -37,5 +37,11 @@ namespace TgBotApi.Controllers
         {
             return Ok();
         }
+
+        [HttpGet("get-error-stats/{databaseName}")]
+        public async Task<IActionResult> GetErrorStatus([FromRoute] string databaseName)
+        {
+            return Ok(await activityRepository.GetErrorStatus(databaseName));
+        }
     }
 }

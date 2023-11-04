@@ -56,7 +56,7 @@ namespace TgBotApi.Repositories
 
         public async Task<AllCredentials> GetByUser(long userId)
         {
-            var query = $@"select * from {TABLE_NAME} where ""{nameof(Credentials.UserId)}"" = @userId";
+            var query = $@"select * from credentials where ""{nameof(Credentials.UserId)}"" = @userId";
             var allCredentials = new AllCredentials();
 
             var queryArgs = new { UserId = userId };
@@ -109,6 +109,20 @@ namespace TgBotApi.Repositories
 
                 return response?.FirstOrDefault();
             }
+        }
+
+        public async Task<Credentials?> GetByIdAndName(int id, string name)
+        {
+            Credentials response;
+            var query = $@"select * from credentials where ""Id""={id} and ""Name""='{name}'";
+            using var connection = context.CreateDefaultConnection();
+            {
+                response = await connection.QueryFirstOrDefaultAsync<Credentials>(query);
+            }
+            connection.Close();
+            
+            return response;
+
         }
     }
 }
