@@ -60,6 +60,18 @@ namespace TgBotApi.Controllers
         [HttpPost]
         public async Task<IActionResult> AddLink(LinkDto request)
         {
+            if (request.CredentialId <= 0)
+            {
+                return BadRequest("Invalid 'CredentialId'");
+            }
+
+            var credential = await credentialsRepository.GetById(request.CredentialId);
+
+            if (credential == null)
+            {
+                return NotFound("Credentials not found");
+            }
+
             var response = await linkService.AddLink(request);
 
             if (response != null)
