@@ -1,4 +1,5 @@
 using KafkaClient.Interfaces;
+using KafkaClient.Models;
 using Microsoft.AspNetCore.Mvc;
 using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;
@@ -46,7 +47,10 @@ namespace TgBotApi.Controllers
             var res = await activityRepository.GetErrorStatus(databaseName);
             if (res.Count > 0)
             {
-                await kafkaProduces.WriteTraceLogAsync(res);
+                var message = new Message();
+                message.MessageType = "ErrorLogsByDatabaseName";
+                message.Object = res;
+                await kafkaProduces.WriteTraceLogAsync(message);
             }
 
             return Ok(res);
