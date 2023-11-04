@@ -2,6 +2,7 @@
 {
     public class Credentials
     {
+        public int Id { get; set; }
         public string Name {  get; set; }
         public long UserId { get; set; }
         public string Host {  get; set; }

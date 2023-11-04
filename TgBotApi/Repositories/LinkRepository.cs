@@ -17,11 +17,11 @@ namespace TgBotApi.Repositories
 
         public async Task<LinkModel?> Add(LinkModel linkModel)
         {
-            var query = $@"insert into {TABLE_NAME} (""CredentialId"", ""Url"")
-                            values (@credentialId, @url)
+            var query = $@"insert into {TABLE_NAME} (""CredentialId"", ""Url"", ""Name"")
+                            values (@credentialId, @url, @name)
                             returning *;";
 
-            var queryArgs = new { CredentialId = linkModel.CredentialId, Url = linkModel.Url };
+            var queryArgs = new { CredentialId = linkModel.CredentialId, Url = linkModel.Url, Name = linkModel.Name };
 
             using (var connection = context.CreateDefaultConnection())
             {
@@ -56,6 +56,20 @@ namespace TgBotApi.Repositories
                 var response = await connection.QueryAsync<LinkModel>(query, queryArgs);
 
                 return response.ToList();
+            }
+        }
+
+        public async Task<LinkModel?> GetByCredentialsAndName(int credentialsId, string name)
+        {
+            var query = $@"select * from {TABLE_NAME} where ""CredentialId"" = @credentialId and ""Name"" = @name";
+
+            var queryArgs = new { CredentialId = credentialsId, Name = name };
+
+            using (var connection = context.CreateDefaultConnection())
+            {
+                var response = await connection.QueryAsync<LinkModel>(query, queryArgs);
+
+                return response?.FirstOrDefault();
             }
         }
     }
