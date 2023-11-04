@@ -7,6 +7,6 @@ namespace TgBotApi.Repositories.Interfaces
         Task<List<StateResponse>> Get(Credentials credentials);
         Task<List<StateChange>> GetErrorStatus(Credentials credentials);
         Task<List<StateChange>> GetAllErrorStatus();
-        Task KillTransaction(long userId);
+        Task KillTransaction(Credentials credentials);
     }
 }

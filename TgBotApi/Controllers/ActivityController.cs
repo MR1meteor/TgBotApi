@@ -34,12 +34,6 @@ namespace TgBotApi.Controllers
             var states = await activityRepository.Get(creds);
             return Ok(states);
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllStates()
-        {
-            return Ok();
-        }
         
         [HttpGet("get-error-stats/{userId}/{name}")]
         public async Task<IActionResult> GetErrorStatusByUserIdAndName([FromRoute] long userId, [FromRoute] string name)
@@ -56,26 +50,12 @@ namespace TgBotApi.Controllers
 
             return Ok(res);
         }
-        
-        [HttpPost("get-error-stats")]
-        public async Task<IActionResult> GetErrorStatusByUserIdAndName([FromBody] Credentials req)
-        {
-            var res = await activityRepository.GetErrorStatus(req);
-            if (res.Count > 0)
-            {
-                var message = new Message();
-                message.MessageType = "ErrorLogsByDatabaseName";
-                message.Object = res;
-                await kafkaProduces.WriteTraceLogAsync(message);
-            }
 
-            return Ok(res);
-        }
-
-        [HttpGet("kill-transaction/{userId}")]
-        public async Task<IActionResult> KillTransaction([FromRoute] long userId)
+        [HttpGet("kill-transaction/{userId}/{database}")]
+        public async Task<IActionResult> KillTransaction([FromRoute] long userId, [FromRoute] string database)
         {
-            await activityRepository.KillTransaction(userId);
+            var credentials = await credentialsRepository.GetByDatabaseAndUserId(userId, database);
+            await activityRepository.KillTransaction(credentials);
             return Ok();
         }
     }

@@ -45,27 +45,23 @@ namespace TgBotApi.Repositories
             for (int i = 0; i < response.Count; i++)
             {
                 response[i].userId = credentials.UserId;
+                response[i].DataBase = credentials.Database;
             }
 
             return response;
         }
 
-        public async Task KillTransaction(long userId)
+        public async Task KillTransaction(Credentials credentials)
         {
-            var creds = await credentialsRepository.GetByUser(userId);
-
-            foreach (var cred in creds.CredentialsList)
-            {
-                using var tr = context.CreateUserConnection(cred);
+                using var tr = context.CreateUserConnection(credentials);
                 {
-                    var response = await GetErrorStatus(cred);
+                    var response = await GetErrorStatus(credentials);
                     foreach (var st in response)
                     {
                         var query = $@"SELECT pg_terminate_backend({st.Pid});";
                         await tr.ExecuteAsync(query);
                     }
                 }
-            }
         }
         
         public async Task<List<StateChange>> GetAllErrorStatus()

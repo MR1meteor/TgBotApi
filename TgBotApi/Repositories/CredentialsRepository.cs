@@ -121,5 +121,15 @@ namespace TgBotApi.Repositories
                 return response.FirstOrDefault();
             }
         }
+
+        public async Task<Credentials?> GetByDatabaseAndUserId(long userId, string databaseName)
+        {
+            var query = $@"select * from {TABLE_NAME} where ""Database""='{databaseName}' and ""UserId""={userId};";
+            using (var connection = context.CreateDefaultConnection())
+            {
+                var response = await connection.QueryAsync<Credentials>(query);
+                return response.FirstOrDefault();
+            }
+        }
     }
 }
