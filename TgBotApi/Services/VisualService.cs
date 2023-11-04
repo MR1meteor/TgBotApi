@@ -1,4 +1,4 @@
-﻿using OpenQA.Selenium;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using TgBotApi.Services.Interfaces;
 
@@ -8,11 +8,7 @@ namespace TgBotApi.Services
     {
         public async Task<string> GetByLink(string link)
         {
-            ChromeOptions options = new ChromeOptions();
-            options.AddArgument("--headless");
-            options.AddArgument("--no-sandbox");
-            options.AddArgument("--disable-dev-shm-usage");
-            var driver = new ChromeDriver(options);
+            var driver = new ChromeDriver();
             driver.Navigate().GoToUrl(link);
 
             Screenshot? screenshot = null;
