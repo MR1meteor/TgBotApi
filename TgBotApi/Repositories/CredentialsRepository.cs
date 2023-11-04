@@ -18,23 +18,40 @@ namespace TgBotApi.Repositories
             this.logger = logger;
         }
 
+        public async Task TryToConnectDatabase(Credentials credentials)
+        {
+            var query = @"select 1;";
+            using (var connection = context.CreateUserConnection(credentials))
+            {
+                await connection.QueryAsync(query);
+            }
+        } 
+
         public async Task<bool> Add(Credentials creds)
         {
-            var query =
-                $@"insert into {TABLE_NAME}(""{nameof(Credentials.Name)}"", ""{nameof(Credentials.UserId)}"", ""{nameof(Credentials.Host)}"",
+            try
+            {
+                await TryToConnectDatabase(creds);
+                var query =
+                    $@"insert into {TABLE_NAME}(""{nameof(Credentials.Name)}"", ""{nameof(Credentials.UserId)}"", ""{nameof(Credentials.Host)}"",
                             ""{nameof(Credentials.Port)}"", ""{nameof(Credentials.Database)}"", ""{nameof(Credentials.Username)}"", ""{nameof(Credentials.Password)}"")
                             values (@name, @userId, @host, @port, @database, @username, @password)
                             returning *";
 
-            using (var connection = context.CreateDefaultConnection())
-            {
-                var response = await connection.QueryAsync<Credentials>(query, creds);
-
-                if (response.FirstOrDefault() != null)
+                using (var connection = context.CreateDefaultConnection())
                 {
-                    return true;
-                }
+                    var response = await connection.QueryAsync<Credentials>(query, creds);
 
+                    if (response.FirstOrDefault() != null)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
                 return false;
             }
         }
