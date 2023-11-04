@@ -43,9 +43,6 @@ builder.Services.AddScoped<IVacuumRepository, VacuumRepository>();
 builder.Services.AddScoped<ILinkRepository, LinkRepository>();
 builder.Services.AddScoped<ILinkService, LinkService>();
 builder.Services.AddHostedService<Worker>();
-builder.Services.AddScoped<IQueryRepository, QueryRepository>();
-builder.Services.AddScoped<IQueryParameterRepository, QueryParameterRepository>();
-
 
 
 var app = builder.Build();

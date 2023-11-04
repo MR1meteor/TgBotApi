@@ -1,6 +1,4 @@
 ﻿using KafkaClient.Interfaces;
-using KafkaClient.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;

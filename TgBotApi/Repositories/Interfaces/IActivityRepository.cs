@@ -6,5 +6,6 @@ namespace TgBotApi.Repositories.Interfaces
     {
         Task<List<StateResponse>> Get(Credentials credentials);
         Task<List<StateChange>> GetErrorStatus(string databaseName);
+        Task<List<StateChange>> GetAllErrorStatus();
     }
 }
