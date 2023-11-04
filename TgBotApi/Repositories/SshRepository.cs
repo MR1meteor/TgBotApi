@@ -1,4 +1,6 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
+using Renci.SshNet;
 using TgBotApi.Data;
 using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;
@@ -9,15 +11,17 @@ public class SshRepository : ISshRepository
 {
     private readonly DapperContext _context;
     private readonly ILogger<SshRepository> _logger;
+    private readonly ICredentialsRepository credentialsRepository;
     private const string TABLE_CREDENTIALS = @"public.credentials";
     private const string TABLE_SSH_SERVERS = @"public.ssh_servers";
     private const string TABLE_SSH_QUERYS = @"public.ssh_custom_queries";
 
 
-    public SshRepository(DapperContext context, ILogger<SshRepository> logger)
+    public SshRepository(DapperContext context, ILogger<SshRepository> logger, ICredentialsRepository credentialsRepository)
     {
         this._context = context;
         this._logger = logger;
+        this.credentialsRepository = credentialsRepository;
     }
 
     public async Task<SshConnect> GetSshString(int userId)
@@ -33,6 +37,30 @@ public class SshRepository : ISshRepository
             var response = await connection.QueryAsync<SshConnect>(query, queryArgs);
 
             return response.FirstOrDefault();
+        }
+    }
+
+    public async Task<bool> SetSshSting(SshConnect connect)
+    {
+        try
+        {
+            var conn = new SshClient(connect.Ip, int.Parse(connect.Port), connect.Username, connect.Password);
+            conn.Connect();
+            conn.Disconnect();
+            
+            var query =
+                $@"insert into {TABLE_SSH_SERVERS}(""CredentialId"", ""Ip"", ""Port"", ""Username"", ""Password"") values ({connect.CredentialId}, '{connect.Ip}', '{connect.Port}', '{connect.Username}', '{connect.Password}')";
+
+            using (var connection = _context.CreateDefaultConnection())
+            {
+                await connection.ExecuteAsync(query);
+            }
+            return true;
+
+        }
+        catch (Exception ex)
+        {
+            return false;
         }
     }
 

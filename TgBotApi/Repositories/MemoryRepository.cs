@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Drawing.Printing;
 using Dapper;
+using KafkaClient.Interfaces;
 using TgBotApi.Data;
 using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;
+using TgBotApi.Services.Interfaces;
 
 namespace TgBotApi.Repositories;
 
@@ -11,11 +13,15 @@ public class MemoryRepository: IMemoryRepository
 {
     private readonly DapperContext context;
     private readonly ICredentialsRepository credentialsRepository;
+    private readonly ISshService sshRepository;
+    private readonly IKafkaProducesService kafkaProducesService;
     
-    public MemoryRepository(DapperContext context, ICredentialsRepository credentialsRepository)
+    public MemoryRepository(DapperContext context, ICredentialsRepository credentialsRepository, ISshService sshRepository, IKafkaProducesService kafkaProducesService)
     {
         this.context = context;
         this.credentialsRepository = credentialsRepository;
+        this.sshRepository = sshRepository;
+        this.kafkaProducesService = kafkaProducesService;
     }
     
     public async Task<bool> UpdateMemoryCorrelations(MemoryCorrelations memoryCorrelations, int userId, string name)
@@ -56,28 +62,23 @@ public class MemoryRepository: IMemoryRepository
         }
     }
 
-    public async Task<string?> CreateDatabaseDump(int userId, string name)
-    {
-        try
-        {
-
-            var credentials = await credentialsRepository.GetByIdAndName(userId, name);
-            var commandLine = string.Format($"pg_dump -h {credentials.Host} -U {credentials.Username} -W {credentials.Password} {credentials.Database} > mysql.sql");
-
-            using (var process = new Process())
-            {
-                process.StartInfo = new ProcessStartInfo {
-                    FileName = "/bin/bash",
-                    Arguments = string.Format( "/c \"{0}\"", commandLine)
-                };
-                process.Start();
-            }
-
-            return null;
-        }
-        catch (Exception ex)
-        {
-            return ex.ToString();
-        }
-    }
+    // public async Task<string?> CreateDatabaseDump(int userId, string name)
+    // {
+    //         var credentials = await credentialsRepository.GetByIdAndName(userId, name);
+    //         var pgDumpCommand = $"pg_dump -U test > test";
+    //         var catCommand = $"cat test";
+    //
+    //         using (var connection = sshRepository.CreateConnection(new SshConnect()
+    //                {
+    //                    Ip = credentials.Host,
+    //                    Password = credentials.Password,
+    //                    Port = credentials.Port,
+    //                    Username = credentials.Username,
+    //                }))
+    //         {
+    //             await sshRepository.ExecuteCommandWithOutOutput(pgDumpCommand, connection);
+    //             var response = await sshRepository.ExecuteCommand(catCommand, connection);
+    //             return response;
+    //         }
+    // }
 }
