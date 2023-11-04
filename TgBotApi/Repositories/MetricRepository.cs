@@ -36,4 +36,15 @@ public class MetricRepository : IMetricRepository
             return await connection.QueryFirstOrDefaultAsync<StatDatabase>(query);
         }
     }
+
+    public async Task<string?> GetDatabaseMemory(Credentials credentials)
+    {
+        var query = @$"SELECT pg_size_pretty(pg_database_size('{credentials.Database}')) table_size";
+
+        using var connection = context.CreateUserConnection(credentials);
+        {
+            var response = await connection.QueryFirstOrDefaultAsync<string>(query);
+            return response;
+        }
+    }
 }

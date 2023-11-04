@@ -17,8 +17,7 @@ namespace TgBotApi.Data
 
         public IDbConnection CreateUserConnection(Credentials credentials)
         {
-            var connectionString = $@"Host={credentials.Database};Port={credentials.Port};Database={credentials.Database};
-                                        User Id={credentials.Username};Password={credentials.Password}";
+            var connectionString = $@"Host={credentials.Host};Port={credentials.Port};Database={credentials.Database};User Id={credentials.Username};Password={credentials.Password}";
 
             return new NpgsqlConnection(connectionString);
         }
