@@ -9,7 +9,7 @@ namespace TgBotApi.Services
         public async Task<string> GetByLink(string link)
         {
             var driver = new ChromeDriver();
-            driver.Navigate().GoToUrl("https://vk.com");
+            driver.Navigate().GoToUrl(link);
 
             Screenshot? screenshot = null;
             try
