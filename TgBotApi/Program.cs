@@ -44,6 +44,8 @@ builder.Services.AddScoped<IVacuumRepository, VacuumRepository>();
 builder.Services.AddScoped<ILinkRepository, LinkRepository>();
 builder.Services.AddScoped<ILinkService, LinkService>();
 builder.Services.AddHostedService<Worker>();
+builder.Services.AddScoped<ISshService, SshService>();
+builder.Services.AddScoped<ISshRepository, SshRepository>();
 
 
 var app = builder.Build();
@@ -51,8 +53,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 // }
 
 app.UseHttpsRedirection();
