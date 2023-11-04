@@ -18,6 +18,7 @@ public class SshService : ISshService
     {
         this._sshRepository = sshRepository;
         this.credentialsRepository = credentialsRepository;
+        this.kafkaProducesService = kafkaProducesService;
     }
 
     public async Task<string> CheckDiskSpace(int UserId)
@@ -110,7 +111,7 @@ public class SshService : ISshService
             var response = await ExecuteCommand(catCommand, connection);
             await kafkaProducesService.WriteTraceLogAsync(new Message()
             {
-                MessageType = "DatabaseDump",
+                MessageType = string.IsNullOrEmpty(response) ? "FailedDatabaseDump" : "SuccessDatabaseDump",
                 Object = new DumpModel()
                 {
                     UserId = userId,
