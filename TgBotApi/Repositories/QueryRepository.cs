@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Newtonsoft.Json;
 using TgBotApi.Data;
 using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;
@@ -17,10 +18,10 @@ namespace TgBotApi.Repositories
 
         public async Task<CustomQuery?> Add(CustomQuery customQuery)
         {
-            var query = $@"insert into {TABLE_NAME} (""CredentialsId"", ""Sql"")
-                            values (@credentialsId, @sql) returning *";
+            var query = $@"insert into {TABLE_NAME} (""CredentialsId"", ""Sql"", ""Name"")
+                            values (@credentialsId, @sql, @name) returning *";
 
-            var queryArgs = new { CredentialsId = customQuery.CredentialsId, Sql = customQuery.Sql };
+            var queryArgs = new { CredentialsId = customQuery.CredentialsId, Sql = customQuery.Sql, Name = customQuery.Name };
 
             using (var connection = context.CreateDefaultConnection())
             {
@@ -36,10 +37,11 @@ namespace TgBotApi.Repositories
 
             using (var connection = context.CreateDefaultConnection())
             {
-                Console.WriteLine($"Типа логи: {executeRequest.Sql}");
-
                 var result = await connection.QueryAsync(query);
-                return result?.ToString();
+                
+                string serialized = JsonConvert.SerializeObject(result);
+
+                return serialized;
             }
         }
 
@@ -61,13 +63,30 @@ namespace TgBotApi.Repositories
         {
             var query = $@"select * from {TABLE_NAME} where ""CredentialsId"" = @credentialsId";
 
+            
+
             var queryArgs = new { CredentialsId = credentialsId };
+            Console.WriteLine($"Типа логи: {query}, {credentialsId}");
 
             using (var connection = context.CreateDefaultConnection())
             {
                 var result = await connection.QueryAsync<CustomQuery>(query, queryArgs);
 
                 return result.ToList();
+            }
+        }
+
+        public async Task<CustomQuery?> GetByCredentialsAndName(int credentialsId, string name)
+        {
+            var query = $@"select * from {TABLE_NAME} where ""CredentialsId"" = @credentialsId and ""Name"" = @name";
+
+            var queryArgs = new { CredentialsId = credentialsId, Name = name };
+
+            using (var connection = context.CreateDefaultConnection())
+            {
+                var result = await connection.QueryAsync<CustomQuery>(query, queryArgs);
+
+                return result?.FirstOrDefault();
             }
         }
     }
