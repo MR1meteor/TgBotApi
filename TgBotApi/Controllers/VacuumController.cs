@@ -20,12 +20,12 @@ namespace TgBotApi.Controllers
             this.logger = logger;
         }
 
-        [HttpGet("full/{userId}/{name}")]
-        public async Task<IActionResult> VacuumFullRefresh([FromRoute] int userId, [FromRoute] string name)
+        [HttpPost("full/{userId}/{name}")]
+        public async Task<IActionResult> VacuumFullRefresh([FromRoute] int userId, [FromRoute] string name, [FromBody] Credentials cr)
         {
-            var credentials = await credentialsRepository.GetByIdAndName(userId, name);
-            logger.LogDebug(credentials.ToString());
-            var res = await vacuumRepository.VacuumFull(credentials);
+            // var credentials = await credentialsRepository.GetByIdAndName(userId, name);
+            // logger.LogDebug(credentials.ToString());
+            var res = await vacuumRepository.VacuumFull(cr);
             return Ok(res);
         }
     }
