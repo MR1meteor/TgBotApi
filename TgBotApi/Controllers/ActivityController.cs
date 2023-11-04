@@ -1,5 +1,4 @@
 using KafkaClient.Interfaces;
-﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;
@@ -12,11 +11,13 @@ namespace TgBotApi.Controllers
     {
         private readonly IActivityRepository activityRepository;
         private readonly ICredentialsRepository credentialsRepository;
+        private readonly IKafkaProducesService kafkaProduces;
 
-        public ActivityController(IActivityRepository activityRepository, ICredentialsRepository credentialsRepository)
+        public ActivityController(IActivityRepository activityRepository, ICredentialsRepository credentialsRepository, IKafkaProducesService kafkaProduces)
         {
             this.activityRepository = activityRepository;
             this.credentialsRepository = credentialsRepository;
+            this.kafkaProduces = kafkaProduces;
         }
 
         [HttpPost]
