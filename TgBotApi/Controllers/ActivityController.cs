@@ -41,11 +41,11 @@ namespace TgBotApi.Controllers
             return Ok();
         }
         
-        [HttpGet("get-error-stats/{userId}/{name}")]
+        [HttpGet("get-error-stats/{userId:int}/{name}")]
         public async Task<IActionResult> GetErrorStatusByUserIdAndName([FromRoute] int userId, [FromRoute] string name)
         {
-            var creds = await credentialsRepository.GetById(userId);
-            var res = await activityRepository.GetErrorStatus(creds);
+            var creds = await credentialsRepository.GetByUser(userId);
+            var res = await activityRepository.GetErrorStatus(creds?.CredentialsList?[0]);
             if (res.Count > 0)
             {
                 var message = new Message();
