@@ -9,6 +9,7 @@ using TgBotApi.Repositories;
 using TgBotApi.Repositories.Interfaces;
 using TgBotApi.Services;
 using TgBotApi.Services.Interfaces;
+using TgBotApi.Worker;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,7 @@ builder.Services.AddScoped<IMetricRepository, MetricRepository>();
 builder.Services.AddScoped<IVacuumRepository, VacuumRepository>();
 builder.Services.AddScoped<ILinkRepository, LinkRepository>();
 builder.Services.AddScoped<ILinkService, LinkService>();
+builder.Services.AddHostedService<Worker>();
 builder.Services.AddScoped<IQueryRepository, QueryRepository>();
 builder.Services.AddScoped<IQueryParameterRepository, QueryParameterRepository>();
 
