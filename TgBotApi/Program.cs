@@ -43,7 +43,7 @@ builder.Services.AddScoped<ILinkRepository, LinkRepository>();
 builder.Services.AddScoped<ILinkService, LinkService>();
 builder.Services.AddScoped<IQueryRepository, QueryRepository>();
 builder.Services.AddScoped<IQueryParameterRepository, QueryParameterRepository>();
-
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
 
 var app = builder.Build();

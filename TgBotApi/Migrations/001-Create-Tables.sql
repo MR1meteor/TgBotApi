@@ -43,3 +43,13 @@ create table if not exists "query_parameters"
             references queries,
     "Parameter" varchar
 );
+
+create table tokens
+(
+    "Id"         serial
+        constraint tokens_pk
+            primary key,
+    "UserId"     bigint,
+    "TokenValue" varchar,
+    "LastLogin"  date
+);
