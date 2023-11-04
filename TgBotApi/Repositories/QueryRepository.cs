@@ -30,6 +30,19 @@ namespace TgBotApi.Repositories
             }
         }
 
+        //public async Task Execute(ExecuteRequest executeRequest)
+        //{
+        //    var query = executeRequest.Sql;
+        //    var queryArgs = { nameof(executeRequest.Sql), executeRequest.Sql };
+
+        //    using (var connection = context.CreateDefaultConnection())
+        //    {
+        //        var result = await connection.QueryAsync(query, queryArgs);
+
+        //        return;
+        //    }
+        //}
+
         public async Task<CustomQuery?> Get(int id)
         {
             var query = $@"select * from {TABLE_NAME} where ""Id"" = @id";
