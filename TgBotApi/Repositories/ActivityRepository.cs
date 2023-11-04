@@ -26,11 +26,11 @@ namespace TgBotApi.Repositories
             }
         }
 
-        public async Task<List<StateChange>> GetErrorStatus(string databaseName)
+        public async Task<List<StateChange>> GetErrorStatus(Credentials credentials)
         {
             var response = new List<StateChange>();
-            var query = $@"select state, state_change as StateLastChangeDate, pid, wait_event_type as WaitEventType from pg_stat_activity where datname='{databaseName}';";
-            using var connection = context.CreateDefaultConnection();
+            var query = $@"select state, state_change as StateLastChangeDate, pid, wait_event_type as WaitEventType from pg_stat_activity where datname='{credentials.Database}';";
+            using var connection = context.CreateUserConnection(credentials);
             {
                 List<StateChange> stateChanges = (await connection.QueryAsync<StateChange>(query)).ToList();
                 foreach (var stateChange in stateChanges)

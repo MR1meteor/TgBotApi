@@ -28,14 +28,14 @@ public sealed class Worker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var resStatuses = await LogAllErrorStatuses(stoppingToken);
-            if (resStatuses.Count > 0)
-            {
-                var message = new Message();
-                message.Object = resStatuses;
-                message.MessageType = "AllLocks";
-                await kafkaProducesService.WriteTraceLogAsync(message);
-            }
+            // var resStatuses = await LogAllErrorStatuses(stoppingToken);
+            // if (resStatuses.Count > 0)
+            // {
+            //     var message = new Message();
+            //     message.Object = resStatuses;
+            //     message.MessageType = "AllLocks";
+            //     await kafkaProducesService.WriteTraceLogAsync(message);
+            // }
             await Task.Delay(15_000, stoppingToken);
         }
     }
