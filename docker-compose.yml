@@ -23,6 +23,8 @@ services:
       - hub_network
     depends_on:
       - database
+      - selenium-hub
+      - chrome
     restart: always
     ports:
       - 81:80
@@ -80,7 +82,7 @@ services:
       DYNAMIC_CONFIG_ENABLED: 'true'
     networks:
       - backend
-    
+  
   chrome:
     image: selenium/node-chrome:4.3.0-20220706
     shm_size: 2gb
@@ -97,9 +99,9 @@ services:
     image: selenium/hub:4.3.0-20220706
     container_name: selenium-hub
     ports:
-       - "4442:4442"
-       - "4443:4443"
-       - "4444:4444"
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
     networks:
       - hub_network
 
