@@ -1,18 +1,18 @@
 ﻿using Npgsql;
 using System.Data;
+using Common.Interfaces;
 using TgBotApi.Models;
 
 namespace TgBotApi.Data
 {
     public class DapperContext
     {
-        private readonly IConfiguration configuration;
         private readonly string connectionString;
 
-        public DapperContext(IConfiguration configuration)
+        public DapperContext(IConfigurationSettings configuration)
         {
-            this.configuration = configuration;
-            this.connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            this.connectionString = configuration.DbConnectionsOwn;
         }
 
         public IDbConnection CreateUserConnection(Credentials credentials)

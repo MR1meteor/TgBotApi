@@ -5,6 +5,10 @@ VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgBotApi", "TgBotApi\TgBotApi.csproj", "{7550119B-05A4-4498-B538-7BE1CCAB1B48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{6C502F80-B902-4DAE-A648-94E56AF60A7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaClient", "KafkaClient\KafkaClient.csproj", "{EDDDE926-FDEF-4BDC-86CC-8B5E373BFB49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{7550119B-05A4-4498-B538-7BE1CCAB1B48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7550119B-05A4-4498-B538-7BE1CCAB1B48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7550119B-05A4-4498-B538-7BE1CCAB1B48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C502F80-B902-4DAE-A648-94E56AF60A7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C502F80-B902-4DAE-A648-94E56AF60A7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C502F80-B902-4DAE-A648-94E56AF60A7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C502F80-B902-4DAE-A648-94E56AF60A7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDDDE926-FDEF-4BDC-86CC-8B5E373BFB49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDDDE926-FDEF-4BDC-86CC-8B5E373BFB49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDDDE926-FDEF-4BDC-86CC-8B5E373BFB49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDDDE926-FDEF-4BDC-86CC-8B5E373BFB49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
