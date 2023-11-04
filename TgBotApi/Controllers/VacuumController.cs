@@ -10,21 +10,23 @@ namespace TgBotApi.Controllers
     {
         private readonly IVacuumRepository vacuumRepository;
         private readonly ICredentialsRepository credentialsRepository;
+        private readonly ILogger<VacuumController> logger;
 
-        public VacuumController(IVacuumRepository activityRepository, ICredentialsRepository credentialsRepository)
+        public VacuumController(IVacuumRepository activityRepository, ICredentialsRepository credentialsRepository,
+            ILogger<VacuumController> logger)
         {
             this.vacuumRepository = activityRepository;
             this.credentialsRepository = credentialsRepository;
+            this.logger = logger;
         }
 
         [HttpGet("full/{userId}/{name}")]
         public async Task<IActionResult> VacuumFullRefresh([FromRoute] int userId, [FromRoute] string name)
         {
-            var crdes = await credentialsRepository.GetByIdAndName(userId, name);
-
-            var res = await vacuumRepository.VacuumFull(crdes);
+            var credentials = await credentialsRepository.GetByIdAndName(userId, name);
+            logger.LogDebug(credentials.ToString());
+            var res = await vacuumRepository.VacuumFull(credentials);
             return Ok(res);
         }
-        
     }
 }

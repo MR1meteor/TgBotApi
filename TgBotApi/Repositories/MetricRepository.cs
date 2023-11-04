@@ -39,7 +39,7 @@ public class MetricRepository : IMetricRepository
 
     public async Task<string?> GetDatabaseMemory(Credentials? credentials)
     {
-        var query = @$"SELECT pg_size_pretty(pg_database_size('{credentials.Database}')) table_size";
+        var query = @$"SELECT pg_size_pretty(pg_database_size('{credentials?.Database}')) table_size";
         string response;
         
         using var connection = context.CreateUserConnection(credentials);
