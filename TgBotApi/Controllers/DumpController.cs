@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TgBotApi.Repositories.Interfaces;
+using TgBotApi.Services.Interfaces;
 
 namespace TgBotApi.Controllers
 {
@@ -7,24 +8,20 @@ namespace TgBotApi.Controllers
     [ApiController]
     public class DumpController : ControllerBase
     {
-        private readonly ICredentialsRepository credentialsRepository;
+        private readonly ISshService sshService;
         private readonly IMemoryRepository memoryRepository;
 
-        public DumpController(ICredentialsRepository credentialsRepository,
+        public DumpController(ISshService sshService,
             IMemoryRepository memoryRepository)
         {
-            this.credentialsRepository = credentialsRepository;
+            this.sshService = sshService;
             this.memoryRepository = memoryRepository;
         }
 
         [HttpGet("dump/{userId}/{name}")]
         public async Task<IActionResult> CreateDump([FromRoute] int userId, [FromRoute] string name)
         {
-            var response = await memoryRepository.CreateDatabaseDump(userId, name);
-            if (string.IsNullOrEmpty(response))
-            {
-                return StatusCode(500, response);
-            }
+            var response = await sshService.CreateDump(userId, name);
             return Ok(response);
         }
     }

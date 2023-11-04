@@ -63,4 +63,10 @@ public class SshController : ControllerBase
         var result = await _sshService.UpdateQuery(query);
         return Ok(result);
     }
+
+    [HttpPost("new-connection")]
+    public async Task<IActionResult> CreateConnection(SshConnect connect)
+    {
+        return Ok(await _sshService.CreateSshConnectionOnCredential(connect));
+    }
 }

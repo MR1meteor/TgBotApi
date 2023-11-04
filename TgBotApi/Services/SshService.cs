@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using KafkaClient.Interfaces;
+using KafkaClient.Models;
 using Renci.SshNet;
 using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;
@@ -9,10 +11,13 @@ namespace TgBotApi.Services;
 public class SshService : ISshService
 {
     private readonly ISshRepository _sshRepository;
+    private readonly ICredentialsRepository credentialsRepository;
+    private readonly IKafkaProducesService kafkaProducesService;
 
-    public SshService(ISshRepository sshRepository)
+    public SshService(ISshRepository sshRepository, ICredentialsRepository credentialsRepository, IKafkaProducesService kafkaProducesService)
     {
         this._sshRepository = sshRepository;
+        this.credentialsRepository = credentialsRepository;
     }
 
     public async Task<string> CheckDiskSpace(int UserId)
@@ -40,7 +45,7 @@ public class SshService : ISshService
 
     public async Task<List<SshQuery>> GetQuery(int userId)
     {
-      return  await _sshRepository.GetQuery(userId);
+        return await _sshRepository.GetQuery(userId);
     }
 
     public void DeleteQuery(int queryId)
@@ -50,7 +55,7 @@ public class SshService : ISshService
 
     public async Task<SshQuery> UpdateQuery(SshQuery query)
     {
-      return await _sshRepository.UpdateQuery(query);
+        return await _sshRepository.UpdateQuery(query);
     }
 
     private SshClient CreateConnection(SshConnect cred)
@@ -80,5 +85,47 @@ public class SshService : ISshService
 
         client.Disconnect();
         return Task.FromResult(stringBuilder.ToString());
+    }
+
+    private Task ExecuteCommandWithOutOutput(string command, SshClient client)
+    {
+        client.Connect();
+        var cmd = client.CreateCommand(command);
+        var result = cmd.BeginExecute();
+        cmd.EndExecute(result);
+        client.Disconnect();
+        return Task.FromResult("");
+    }
+
+    public async Task<string> CreateDump(int userId, string name)
+    {
+        var credentials = await credentialsRepository.GetByIdAndName(userId, name);
+        var cred = await _sshRepository.GetSshString(userId);
+        var pgDumpCommand = $"pg_dump -U {credentials.Database} > test";
+        var catCommand = $"cat test";
+
+        using (var connection = CreateConnection(cred))
+        {
+            await ExecuteCommandWithOutOutput(pgDumpCommand, connection);
+            var response = await ExecuteCommand(catCommand, connection);
+            await kafkaProducesService.WriteTraceLogAsync(new Message()
+            {
+                MessageType = "DatabaseDump",
+                Object = new DumpModel()
+                {
+                    UserId = userId,
+                    CredentialId = credentials.Id,
+                    EventDate = DateTime.Now,
+                    SQL = response
+                }
+            });
+            return response;
+
+        }
+    }
+
+    public async Task<bool> CreateSshConnectionOnCredential(SshConnect connect)
+    {
+        return await _sshRepository.SetSshSting(connect);
     }
 }
