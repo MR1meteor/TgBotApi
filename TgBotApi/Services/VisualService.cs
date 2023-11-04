@@ -10,6 +10,8 @@ namespace TgBotApi.Services
         {
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--headless");
+            options.AddArgument("--no-sandbox");
+            options.AddArgument("--disable-dev-shm-usage");
             var driver = new ChromeDriver(options);
             driver.Navigate().GoToUrl(link);
 
