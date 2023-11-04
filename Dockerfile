@@ -5,13 +5,13 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["TgBotApi.csproj", "./"]
-RUN dotnet restore "TgBotApi.csproj"
 COPY . .
-WORKDIR "/src/"
+RUN dotnet restore "TgBotApi/TgBotApi.csproj"
+WORKDIR "/src/TgBotApi"
 RUN dotnet build "TgBotApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
+WORKDIR "/src/TgBotApi"
 RUN dotnet publish "TgBotApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final

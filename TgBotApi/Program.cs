@@ -1,5 +1,9 @@
 using DbUp;
 using System.Reflection;
+using Common;
+using Common.Interfaces;
+using KafkaClient.Interfaces;
+using KafkaClient.Services;
 using TgBotApi.Data;
 using TgBotApi.Repositories;
 using TgBotApi.Repositories.Interfaces;
@@ -8,7 +12,7 @@ using TgBotApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetSection("DbConnections").GetSection("OnwDataBasePostgress").Value;
 
 var upgrader = DeployChanges.To
     .PostgresqlDatabase(connectionString)
@@ -26,6 +30,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<DapperContext>();
+builder.Services.AddSingleton<IConfigurationSettings, ConfigurationSettings>();
+builder.Services.AddSingleton<IKafkaProducesService, KafkaProducesService>();
+
 
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<ICredentialsRepository, CredentialsRepository>();
@@ -34,6 +41,8 @@ builder.Services.AddScoped<IMetricRepository, MetricRepository>();
 builder.Services.AddScoped<IVacuumRepository, VacuumRepository>();
 builder.Services.AddScoped<ILinkRepository, LinkRepository>();
 builder.Services.AddScoped<ILinkService, LinkService>();
+
+
 
 var app = builder.Build();
 
