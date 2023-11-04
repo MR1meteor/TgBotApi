@@ -5,12 +5,14 @@ using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;
 
 namespace TgBotApi.Worker;
+
 public sealed class Worker : BackgroundService
 {
     private readonly IServiceProvider serviceProvider;
     private readonly IKafkaProducesService kafkaProducesService;
 
-    public Worker(IServiceProvider serviceProvider, IKafkaProducesService logger) {
+    public Worker(IServiceProvider serviceProvider, IKafkaProducesService logger)
+    {
         this.serviceProvider = serviceProvider;
         this.kafkaProducesService = logger;
     }
@@ -23,6 +25,7 @@ public sealed class Worker : BackgroundService
             return await scopedRepository.GetAllCredentials();
         }
     }
+
     private async Task<List<StateChange>> GetErrorStatus(Credentials credentials)
     {
         using (IServiceScope scope = serviceProvider.CreateScope())
@@ -31,7 +34,7 @@ public sealed class Worker : BackgroundService
             return await scopedRepository.GetErrorStatus(credentials);
         }
     }
-    
+
     private async Task<List<StateChange>> LogAllErrorStatuses(Credentials credentials)
     {
         using (IServiceScope scope = serviceProvider.CreateScope())
@@ -42,6 +45,7 @@ public sealed class Worker : BackgroundService
             return await scopedProcessingService.GetErrorStatus(credentials);
         }
     }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -49,15 +53,22 @@ public sealed class Worker : BackgroundService
             var allCredentials = await GetAllCredentials();
             foreach (var credential in allCredentials.CredentialsList)
             {
-                var response = await GetErrorStatus(credential);
-                if (response.Count > 0)
+                try
                 {
-                    var message = new Message();
-                    message.Object = response;
-                    message.MessageType = "LockStatus";
-                    await kafkaProducesService.WriteTraceLogAsync(message);
+                    var response = await GetErrorStatus(credential);
+                    if (response.Count > 0)
+                    {
+                        var message = new Message();
+                        message.Object = response;
+                        message.MessageType = "LockStatus";
+                        await kafkaProducesService.WriteTraceLogAsync(message);
+                    }
+                }
+                catch (Exception ex)
+                {
                 }
             }
+
             await Task.Delay(15_000, stoppingToken);
         }
     }
