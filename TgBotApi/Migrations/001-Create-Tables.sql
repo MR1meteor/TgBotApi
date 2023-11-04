@@ -33,7 +33,7 @@ create table if not exists queries
     "Sql"          varchar
 );
 
-create table if not exists query_parameters
+create table if not exists "query_parameters"
 (
     "Id"        serial
         constraint "QueryParameters_pk"
