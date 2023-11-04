@@ -42,10 +42,19 @@ namespace TgBotApi.Repositories
                 }
             }
 
+            if (response.Count == 0)
+            {
+                var emptyState = new StateChange();
+                emptyState.MessageType = "Ok";
+                response.Add(emptyState);
+                return response;
+            }
+
             for (int i = 0; i < response.Count; i++)
             {
                 response[i].userId = credentials.UserId;
                 response[i].DataBase = credentials.Database;
+                response[i].MessageType = response[i].WaitEventType;
             }
 
             return response;

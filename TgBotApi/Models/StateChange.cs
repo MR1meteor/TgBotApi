@@ -7,5 +7,6 @@ public class StateChange
     public DateTimeOffset StateLastChangeDate { get; set; }
     public string WaitEventType { get; set; }
     public string DataBase { get; set; }
+    public string MessageType { get; set; }
     public long userId { get; set; }
 }
