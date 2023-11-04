@@ -11,13 +11,6 @@ create table if not exists credentials
         primary key
 );
 
-create table if not exists Users
-(
-    "Id"       serial
-        primary key,
-    "UserId"   bigint
-);
-
 create table if not exists links
 (
     "Id"           serial
