@@ -41,8 +41,8 @@ namespace TgBotApi.Controllers
             return Ok();
         }
         
-        [HttpGet("get-error-stats/{userId:int}/{name}")]
-        public async Task<IActionResult> GetErrorStatusByUserIdAndName([FromRoute] int userId, [FromRoute] string name)
+        [HttpGet("get-error-stats/{userId}/{name}")]
+        public async Task<IActionResult> GetErrorStatusByUserIdAndName([FromRoute] long userId, [FromRoute] string name)
         {
             var creds = await credentialsRepository.GetByUser(userId);
             var res = await activityRepository.GetErrorStatus(creds?.CredentialsList?[0]);
@@ -70,6 +70,13 @@ namespace TgBotApi.Controllers
             }
 
             return Ok(res);
+        }
+
+        [HttpGet("kill-transaction/{userId}")]
+        public async Task<IActionResult> KillTransaction([FromRoute] long userId)
+        {
+            await activityRepository.KillTransaction(userId);
+            return Ok();
         }
     }
 }

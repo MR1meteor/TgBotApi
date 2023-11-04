@@ -9,16 +9,18 @@ namespace TgBotApi.Repositories
     {
         private const string TABLE_NAME = @"""pg_catalog"".""pg_stat_activity""";
         private readonly DapperContext context;
+        private readonly ICredentialsRepository credentialsRepository;
         
-        public ActivityRepository(DapperContext context)
+        public ActivityRepository(DapperContext context, ICredentialsRepository credentialsRepository)
         {
             this.context = context;
+            this.credentialsRepository = credentialsRepository;
         }
 
         public async Task<List<StateResponse>> Get(Credentials credentials)
         {
             var query = $@"select ""datname"", ""state"" from {TABLE_NAME} where ""datname"" is not null";
-
+            
             using (var connection = context.CreateUserConnection(credentials))
             {
                 var states = await connection.QueryAsync<StateResponse>(query);
@@ -46,7 +48,25 @@ namespace TgBotApi.Repositories
             }
 
             return response;
-        } 
+        }
+
+        public async Task KillTransaction(long userId)
+        {
+            var creds = await credentialsRepository.GetByUser(userId);
+
+            foreach (var cred in creds.CredentialsList)
+            {
+                using var tr = context.CreateUserConnection(cred);
+                {
+                    var response = await GetErrorStatus(cred);
+                    foreach (var st in response)
+                    {
+                        var query = $@"SELECT pg_terminate_backend({st.Pid});";
+                        await tr.ExecuteAsync(query);
+                    }
+                }
+            }
+        }
         
         public async Task<List<StateChange>> GetAllErrorStatus()
         {
