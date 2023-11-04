@@ -22,6 +22,11 @@ namespace TgBotApi.Controllers
         public async Task<IActionResult> CreateDump([FromRoute] int userId, [FromRoute] string name)
         {
             var response = await sshService.CreateDump(userId, name);
+            if (string.IsNullOrEmpty(response))
+            {
+                return StatusCode(500, response);
+            }
+
             return Ok(response);
         }
     }
