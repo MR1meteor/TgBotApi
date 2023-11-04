@@ -1,3 +1,4 @@
+using KafkaClient.Interfaces;
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TgBotApi.Models;
@@ -41,7 +42,13 @@ namespace TgBotApi.Controllers
         [HttpGet("get-error-stats/{databaseName}")]
         public async Task<IActionResult> GetErrorStatus([FromRoute] string databaseName)
         {
-            return Ok(await activityRepository.GetErrorStatus(databaseName));
+            var res = await activityRepository.GetErrorStatus(databaseName);
+            if (res.Count > 0)
+            {
+                await kafkaProduces.WriteTraceLogAsync(res);
+            }
+
+            return Ok(res);
         }
     }
 }
