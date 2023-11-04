@@ -49,7 +49,7 @@ namespace TgBotApi.Controllers
             if (res.Count > 0)
             {
                 var message = new Message();
-                message.MessageType = "ErrorLogsByDatabaseName";
+                message.MessageType = "LockStatus";
                 message.Object = res;
                 await kafkaProduces.WriteTraceLogAsync(message);
             }
