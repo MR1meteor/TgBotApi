@@ -10,7 +10,7 @@ namespace TgBotApi.Services
     {
         public async Task<string> GetByLink(string link)
         {
-            var driver = new RemoteWebDriver(new Uri("http://seleniumhub:4444/wd/hub"), new FirefoxOptions());
+            var driver = new RemoteWebDriver(new Uri("http://selenium-hub:4444/wd/hub"), new ChromeOptions());
 
             driver.Navigate().GoToUrl(link);
 
