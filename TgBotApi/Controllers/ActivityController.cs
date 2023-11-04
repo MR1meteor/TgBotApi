@@ -44,7 +44,7 @@ namespace TgBotApi.Controllers
         [HttpGet("get-error-stats/{userId}/{name}")]
         public async Task<IActionResult> GetErrorStatusByUserIdAndName([FromRoute] int userId, [FromRoute] string name)
         {
-            var creds = await credentialsRepository.GetByIdAndName(userId, name);
+            var creds = await credentialsRepository.GetById(userId);
             var res = await activityRepository.GetErrorStatus(creds);
             if (res.Count > 0)
             {
