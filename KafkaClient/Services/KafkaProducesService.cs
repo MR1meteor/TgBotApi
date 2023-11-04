@@ -44,4 +44,16 @@ public class KafkaProducesService : IKafkaProducesService
             _ = Task.CompletedTask;
         }
     }
+    public async Task TestLog(object value)
+    {
+        try
+        {
+            await _producer.ProduceAsync("test-topic", new Message<Null, string> { Value = value.ToJson() });
+        }
+        catch (ProduceException<Null, string> exc)
+        {
+            _logger.LogError($"Send message to kafka failed: {exc.Error}. Message: {value.ToJson()}");
+            _ = Task.CompletedTask;
+        }
+    }
 }
