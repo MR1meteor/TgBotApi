@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System.Drawing.Printing;
+using Dapper;
 using TgBotApi.Data;
 using TgBotApi.Models;
 
@@ -9,16 +10,20 @@ public class MetricRepository : IMetricRepository
     private const string TABLE_NAME = @"public.credentials";
     private readonly DapperContext context;
     private readonly ILogger<MetricRepository> logger;
+    private readonly ICredentialsRepository credentialsRepository;
 
-    public MetricRepository(DapperContext context, ILogger<MetricRepository> logger)
+    public MetricRepository(DapperContext context, ILogger<MetricRepository> logger, ICredentialsRepository credentialsRepository)
     {
         this.context = context;
         this.logger = logger;
+        this.credentialsRepository = credentialsRepository;
     }
 
-    public async Task<StatDatabase> GetStatDatabaseMetric(string datname)
+    public async Task<StatDatabase> GetStatDatabaseMetric(int userId, string name)
     {
-        using var connection = context.CreateDefaultConnection();
+        var credentials = await credentialsRepository.GetByIdAndName(userId, name);
+        
+        using var connection = context.CreateUserConnection(credentials);
         {
             var query = @$"select sum(xact_commit + xact_rollback) as transactionCount,
                             sum(tup_fetched) as getCount,
@@ -32,7 +37,7 @@ public class MetricRepository : IMetricRepository
                             sum(sessions) as sesssionCount,
                             sum(sessions_killed) as sessionKilledCount,
                             sum(sessions_fatal) as sessionAbandonedCount
-                        from pg_stat_database where datname = ""{nameof(datname)}"";";
+                        from pg_stat_database where datname = '{credentials.Database}';";
             return await connection.QueryFirstOrDefaultAsync<StatDatabase>(query);
         }
     }

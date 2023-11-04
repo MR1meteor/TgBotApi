@@ -18,10 +18,10 @@ namespace TgBotApi.Controllers
             this.metricRepository = metricRepository;
         }
 
-        [HttpGet("stat-database/{datname}")]
-        public async Task<IActionResult> GetStatDatabaseMetric([FromRoute] string datname)
+        [HttpGet("stat-database/{userId}/{name}")]
+        public async Task<IActionResult> GetStatDatabaseMetric([FromRoute] int userId, [FromRoute] string name)
         {
-            return Ok(await metricRepository.GetStatDatabaseMetric(datname));
+            return Ok(await metricRepository.GetStatDatabaseMetric(userId, name));
         }
     }
 }
