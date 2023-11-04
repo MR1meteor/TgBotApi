@@ -41,6 +41,8 @@ builder.Services.AddScoped<IMetricRepository, MetricRepository>();
 builder.Services.AddScoped<IVacuumRepository, VacuumRepository>();
 builder.Services.AddScoped<ILinkRepository, LinkRepository>();
 builder.Services.AddScoped<ILinkService, LinkService>();
+builder.Services.AddScoped<IQueryRepository, QueryRepository>();
+builder.Services.AddScoped<IQueryParameterRepository, QueryParameterRepository>();
 
 
 

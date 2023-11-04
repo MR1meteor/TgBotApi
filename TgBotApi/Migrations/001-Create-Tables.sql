@@ -21,3 +21,25 @@ create table if not exists links
             on delete set null,
     "Url"         varchar
 );
+
+create table if not exists queries
+(
+    "Id"           serial
+        constraint queries_pk
+            primary key,
+    "CredentialsId" integer
+        constraint "queries_credentials_Id_fk"
+            references credentials,
+    "Sql"          varchar
+);
+
+create table if not exists query_parameters
+(
+    "Id"        serial
+        constraint "QueryParameters_pk"
+            primary key,
+    "QueryId"   integer
+        constraint "QueryParameters_queries_Id_fk"
+            references queries,
+    "Parameter" varchar
+);
