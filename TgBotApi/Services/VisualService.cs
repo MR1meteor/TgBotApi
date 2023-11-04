@@ -1,5 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Remote;
 using TgBotApi.Services.Interfaces;
 
 namespace TgBotApi.Services
@@ -8,7 +10,8 @@ namespace TgBotApi.Services
     {
         public async Task<string> GetByLink(string link)
         {
-            var driver = new ChromeDriver();
+            var driver = new RemoteWebDriver(new Uri("http://seleniumhub:4444/wd/hub"), new FirefoxOptions());
+
             driver.Navigate().GoToUrl(link);
 
             Screenshot? screenshot = null;
