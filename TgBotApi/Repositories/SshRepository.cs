@@ -101,6 +101,15 @@ public class SshRepository : ISshRepository
         throw new NotImplementedException();
     }
 
+    public async Task InsertSQLDumps(string sql, int credentialsId)
+    {
+        using (var connection = _context.CreateDefaultConnection())
+        {
+            var query = $@"insert into Dumps(sql, credentialsId) values ('{sql}', {credentialsId});";
+            await connection.ExecuteAsync(query);
+        }
+    }
+
     public Task<SshQuery> UpdateQuery(SshQuery query)
     {
         throw new NotImplementedException();

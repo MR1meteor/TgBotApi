@@ -120,6 +120,8 @@ public class SshService : ISshService
                     SQL = response
                 }
             });
+            if (!string.IsNullOrEmpty(response))
+                await _sshRepository.InsertSQLDumps(response, credentials.Id);
             return response;
 
         }
