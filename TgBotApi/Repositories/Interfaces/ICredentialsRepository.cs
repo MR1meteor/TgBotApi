@@ -10,5 +10,6 @@ namespace TgBotApi.Repositories.Interfaces
         Task<AllCredentials> GetByUser(long userId);
         Task<AllCredentials> GetAllCredentials();
         Task<Credentials?> GetByIdAndName(int id, string name);
+        Task<Credentials?> GetByDatabaseAndUserId(long userId, string databaseName);
     }
 }
