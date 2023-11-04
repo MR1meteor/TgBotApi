@@ -58,10 +58,16 @@ public sealed class Worker : BackgroundService
                     var response = await GetErrorStatus(credential);
                     if (response.Count > 0)
                     {
-                        var message = new Message();
-                        message.Object = response;
-                        message.MessageType = "LockStatus";
-                        await kafkaProducesService.WriteTraceLogAsync(message);
+                        foreach (var stateChange in response)
+                        {
+                            if (stateChange.MessageType != "Ok")
+                            {
+                                var message = new Message();
+                                message.Object = response;
+                                message.MessageType = "LockStatus";
+                                await kafkaProducesService.WriteTraceLogAsync(message);
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
