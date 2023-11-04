@@ -8,7 +8,9 @@ namespace TgBotApi.Services
     {
         public async Task<string> GetByLink(string link)
         {
-            var driver = new ChromeDriver();
+            ChromeOptions options = new ChromeOptions();
+            options.AddArgument("--headless");
+            var driver = new ChromeDriver(options);
             driver.Navigate().GoToUrl(link);
 
             Screenshot? screenshot = null;
