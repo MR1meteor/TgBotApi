@@ -7,7 +7,6 @@ namespace TgBotApi.Repositories;
 
 public class VacuumRepository: IVacuumRepository
 {
-    private const string TABLE_NAME = @"public.credentials";
     private readonly DapperContext context;
     private readonly ILogger<MetricRepository> logger;
     private readonly IMetricRepository metricRepository;
@@ -29,8 +28,9 @@ public class VacuumRepository: IVacuumRepository
         using var connection = context.CreateUserConnection(credentials);
         {
             await connection.ExecuteAsync(query);
-            vacuumFullRefresh.AfterMemory = await metricRepository.GetDatabaseMemory(credentials);
         }
+        connection.Close();        
+        vacuumFullRefresh.AfterMemory = await metricRepository.GetDatabaseMemory(credentials);
 
         return vacuumFullRefresh;
     }
