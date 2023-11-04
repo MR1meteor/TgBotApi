@@ -30,18 +30,18 @@ namespace TgBotApi.Repositories
             }
         }
 
-        //public async Task Execute(ExecuteRequest executeRequest)
-        //{
-        //    var query = executeRequest.Sql;
-        //    var queryArgs = { nameof(executeRequest.Sql), executeRequest.Sql };
+        public async Task<string?> Execute(ExecuteRequest executeRequest)
+        {
+            var query = executeRequest.Sql;
 
-        //    using (var connection = context.CreateDefaultConnection())
-        //    {
-        //        var result = await connection.QueryAsync(query, queryArgs);
+            using (var connection = context.CreateDefaultConnection())
+            {
+                Console.WriteLine($"Типа логи: {executeRequest.Sql}");
 
-        //        return;
-        //    }
-        //}
+                var result = await connection.QueryAsync(query);
+                return result?.ToString();
+            }
+        }
 
         public async Task<CustomQuery?> Get(int id)
         {

@@ -100,12 +100,12 @@ namespace TgBotApi.Controllers
             return Ok(response);
         }
 
-        //[HttpPost("execute")]
-        //public async Task<IActionResult> Execute(ExecuteRequest request)
-        //{
-        //    await queryRepository.Execute(request);
+        [HttpPost("execute")]
+        public async Task<IActionResult> Execute(ExecuteRequest request)
+        {
+            var result = await queryRepository.Execute(request);
 
-        //    return Ok();
-        //}
+            return Ok(result);
+        }
     }
 }
