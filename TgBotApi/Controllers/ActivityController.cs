@@ -56,5 +56,20 @@ namespace TgBotApi.Controllers
 
             return Ok(res);
         }
+        
+        [HttpPost("get-error-stats")]
+        public async Task<IActionResult> GetErrorStatusByUserIdAndName([FromBody] Credentials req)
+        {
+            var res = await activityRepository.GetErrorStatus(req);
+            if (res.Count > 0)
+            {
+                var message = new Message();
+                message.MessageType = "ErrorLogsByDatabaseName";
+                message.Object = res;
+                await kafkaProduces.WriteTraceLogAsync(message);
+            }
+
+            return Ok(res);
+        }
     }
 }

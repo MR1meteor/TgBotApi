@@ -113,16 +113,12 @@ namespace TgBotApi.Repositories
 
         public async Task<Credentials?> GetByIdAndName(int id, string name)
         {
-            Credentials response;
             var query = $@"select * from {TABLE_NAME} where ""Id""={id} and ""Name""='{name}'";
             using var connection = context.CreateDefaultConnection();
             {
-                response = await connection.QueryFirstOrDefaultAsync<Credentials>(query);
+                Credentials? response = await connection.QueryFirstOrDefaultAsync<Credentials?>(query);
+                return response;
             }
-            connection.Close();
-            
-            return response;
-
         }
     }
 }
