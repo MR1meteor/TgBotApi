@@ -184,4 +184,14 @@ public class SshService : ISshService
     {
         return await _sshRepository.GetDumpsByUserId(userId, name);
     }
+
+    public async Task<SshConnect?> GetSshConnection(int credentialsId)
+    {
+        return await _sshRepository.GetConnectByCredentials(credentialsId);
+    }
+
+    public async Task<ExecuteResponse> Execute(SshConnect connect, string query)
+    {
+        return await _sshRepository.Execute(connect, query);
+    }
 }

@@ -136,4 +136,31 @@ public class SshController : ControllerBase
     {
         return Ok(await _sshService.GetAllConnections(userId));
     }
+
+    [HttpPost("execute")]
+    public async Task<IActionResult> Execute([FromBody] ExecuteSshDto request)
+    {
+        var credentials = await credentialsRepository.GetByIdAndName(request.UserId, request.DatabaseName);
+
+        if (credentials == null)
+        {
+            return NotFound("Credentials not found");
+        }
+
+        var connection = await _sshService.GetSshConnection(credentials.Id);
+
+        if (connection == null)
+        {
+            return NotFound("Connection not found");
+        }
+
+        var result = await _sshService.Execute(connection, request.Query);
+
+        if (!string.IsNullOrEmpty(result.Error))
+        {
+           return BadRequest(result);
+        }
+        
+        return Ok(result);
+    }
 }

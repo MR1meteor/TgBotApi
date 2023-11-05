@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using Dapper;
 using Renci.SshNet;
 using TgBotApi.Data;
@@ -39,6 +40,20 @@ public class SshRepository : ISshRepository
             return response.FirstOrDefault();
         }
     }
+
+    public async Task<SshConnect?> GetConnectByCredentials(int credentialsId)
+    {
+        var query = $@"select * from {TABLE_SSH_SERVERS} where ""CredentialId"" = @credentialsId";
+        var queryArgs = new { CredentialsId = credentialsId };
+
+        using (var connection = _context.CreateDefaultConnection())
+        {
+            var response = await connection.QueryAsync<SshConnect>(query, queryArgs);
+
+            return response?.FirstOrDefault();
+        }
+    }
+
 
     public async Task<bool> SetSshSting(SshConnect connect)
     {
@@ -169,5 +184,23 @@ public class SshRepository : ISshRepository
     public Task<SshQuery> UpdateQuery(SshQuery query)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<ExecuteResponse> Execute(SshConnect connect, string query)
+    {
+        try
+        {
+            var conn = new SshClient(connect.Ip, int.Parse(connect.Port), connect.Username, connect.Password);
+
+            conn.Connect();
+            conn.RunCommand(query);
+            conn.Disconnect();
+
+            return new ExecuteResponse(response: "Success");
+        }
+        catch (Exception ex)
+        {
+            return new ExecuteResponse(error: ex.Message);
+        }
     }
 }

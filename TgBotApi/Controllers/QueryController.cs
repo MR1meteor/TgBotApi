@@ -170,6 +170,11 @@ namespace TgBotApi.Controllers
 
             var result = await queryRepository.Execute(credentials, request.Sql);
 
+            if (!string.IsNullOrEmpty(result.Error))
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
 
@@ -199,9 +204,12 @@ namespace TgBotApi.Controllers
                 sql = sql.Replace(queryParameters[i].Parameter, request.Parameters[i]);
             }
 
-            Console.WriteLine($"Типа логи: {sql}");
-
             var result = await queryRepository.Execute(credentials, sql);
+
+            if (!string.IsNullOrEmpty(result.Error))
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
