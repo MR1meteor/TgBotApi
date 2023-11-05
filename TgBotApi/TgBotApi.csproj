@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <None Remove="Migrations\001-Create-Tables.sql" />
+    <None Remove="Migrations\003-Create-sshTable-custom-query.sql" />
+    <None Remove="Migrations\004-Create-dumpsTable.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +17,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\002-Create-sshTable.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\003-Create-sshTable-custom-query.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\004-Create-dumpsTable.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
