@@ -55,17 +55,15 @@ namespace TgBotApi.Controllers
         [HttpPost("by-string")]
         public async Task<IActionResult> AddCredentialsByString(CredentialsStringDto request)
         {
-            var pattern = "^Server=[\\w]+;Port=[\\d]+;Database=[\\w]+;Uid=[\\w]+;Pwd=[\\w]+"; // Server=IP address;Port=5432;Database=myDataBase;Uid=myUsername;Pwd=myPassword;
-            var regex = new Regex(pattern);
-            var match = regex.Match(request.ConnectionString);
+            var regex = new Regex("Server=([A-Za-z0-9]+(\\.[A-Za-z0-9]+)+);Port=[A-Za-z0-9]+;Database=[A-Za-z0-9]+;Uid=[A-Za-z0-9]+;Pwd=[A-Za-z0-9]+;", RegexOptions.IgnoreCase);
+            var match = regex.IsMatch(request.ConnectionString);
 
-            if (!match.Success)
+            if (!match)
             {
-                return BadRequest();
+                return BadRequest("Invalid connection string");
             }
 
             var credsPairs = request.ConnectionString.Split(';');
-            var credsDict = new Dictionary<string, string>();
 
             var credentials = new Credentials
             {
@@ -77,6 +75,8 @@ namespace TgBotApi.Controllers
                 Username = credsPairs[3].Split('=')[1],
                 Password = credsPairs[4].Split('=')[1]
             };
+
+            Console.WriteLine($"{credentials.Host}, {credentials.Port}, {credentials.Database}, {credentials.Username}, {credentials.Password}");
 
             return Ok(await credentialsRepository.Add(credentials));
         }
