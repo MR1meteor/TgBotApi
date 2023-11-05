@@ -31,18 +31,26 @@ namespace TgBotApi.Repositories
             }
         }
 
-        public async Task<string?> Execute(ExecuteRequest executeRequest, Credentials credentials)
+        public async Task<ExecuteResponse> Execute(Credentials credentials, string sql)
         {
-            var query = executeRequest.Sql;
-
-            using (var connection = context.CreateUserConnection(credentials))
+            try
             {
-                var result = await connection.QueryAsync(query);
-                
-                string serialized = JsonConvert.SerializeObject(result);
+                var query = sql;
 
-                return serialized;
+                using (var connection = context.CreateUserConnection(credentials))
+                {
+                    var result = await connection.QueryAsync(query);
+                
+                    string serialized = JsonConvert.SerializeObject(result);
+
+                    return new ExecuteResponse(response: serialized);
+                }
             }
+            catch (Exception ex)
+            {
+                return new ExecuteResponse(error: ex.Message);
+            }
+            
         }
 
         public async Task<CustomQuery?> Get(int id)
