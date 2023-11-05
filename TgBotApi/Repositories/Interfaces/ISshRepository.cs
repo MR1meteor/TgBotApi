@@ -14,4 +14,5 @@ public interface ISshRepository
     Task<List<CredentialAndDatabase>> SelectAllConnections(int userId);
     Task<string> SelectDumpSql(int dumpId);
     Task<Credentials> SelectCredentials(int dumpId);
+    Task<List<DumpModel>> GetDumpsByUserId(int userId, string name);
 }
