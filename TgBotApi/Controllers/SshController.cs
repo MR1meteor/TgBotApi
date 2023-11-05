@@ -163,4 +163,38 @@ public class SshController : ControllerBase
         
         return Ok(result);
     }
+
+    [HttpPost("execute-template")]
+    public async Task<IActionResult> ExecuteTemplate([FromBody] ExecuteTemplateSshRequest request)
+    {
+        var credentials = await credentialsRepository.GetByIdAndName(request.UserId, request.DatabaseName);
+
+        if (credentials == null)
+        {
+            return NotFound("Credentials not found");
+        }
+
+        var connection = await _sshService.GetSshConnection(credentials.Id);
+
+        if (connection == null)
+        {
+            return NotFound("Connection not found");
+        }
+
+        var query = await _sshService.GetQueryByCreds(credentials.Id, request.QueryName);
+
+        if (query == null)
+        {
+            return NotFound("Query not found");
+        }
+
+        var result = await _sshService.Execute(connection, query.QueryName);
+
+        if (!string.IsNullOrEmpty(result.Error))
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
 }
