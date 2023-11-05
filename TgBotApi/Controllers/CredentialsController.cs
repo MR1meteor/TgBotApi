@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;
 
@@ -49,6 +50,35 @@ namespace TgBotApi.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpPost("by-string")]
+        public async Task<IActionResult> AddCredentialsByString(CredentialsStringDto request)
+        {
+            var pattern = "^Server=[\\w]+;Port=[\\d]+;Database=[\\w]+;Uid=[\\w]+;Pwd=[\\w]+"; // Server=IP address;Port=5432;Database=myDataBase;Uid=myUsername;Pwd=myPassword;
+            var regex = new Regex(pattern);
+            var match = regex.Match(request.ConnectionString);
+
+            if (!match.Success)
+            {
+                return BadRequest();
+            }
+
+            var credsPairs = request.ConnectionString.Split(';');
+            var credsDict = new Dictionary<string, string>();
+
+            var credentials = new Credentials
+            {
+                Name = request.Name,
+                UserId = request.UserId,
+                Host = credsPairs[0].Split('=')[1],
+                Port = credsPairs[1].Split('=')[1],
+                Database = credsPairs[2].Split('=')[1],
+                Username = credsPairs[3].Split('=')[1],
+                Password = credsPairs[4].Split('=')[1]
+            };
+
+            return Ok(await credentialsRepository.Add(credentials));
         }
     }
 }
