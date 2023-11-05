@@ -113,7 +113,7 @@ public class SshRepository : ISshRepository
         using (var connection = _context.CreateDefaultConnection())
         {
             Console.WriteLine(sql);
-            var query = $@"insert into Dumps(""sql"", ""credentialsId"") values ('{sql}', {credentialsId})";
+            var query = $@"insert into Dumps(""sql"", ""credentialsid"") values ('{sql}', {credentialsId})";
             await connection.ExecuteAsync(query);
         }
     }
@@ -128,6 +128,30 @@ public class SshRepository : ISshRepository
                 var pair = (await connection.QueryAsync<CredentialAndDatabase>(query)).ToList();
                 return pair;
             }
+    }
+
+    public async Task<string> SelectDumpSql(int dumpId)
+    {
+        var query = $@"select ""sql"" from ""dumps"" where ""id""={dumpId} ";
+
+        using var connection = _context.CreateDefaultConnection();
+        {
+            return (await connection.QueryAsync<string>(query)).FirstOrDefault();
+        }
+    }
+
+    private async Task<int> SelectCredentialsId(int dumpId)
+    {
+        using var connection = _context.CreateDefaultConnection();
+        {
+            return await connection.QueryFirstOrDefaultAsync<int>($@"select credentialsid from dumps where id={dumpId};");
+        }
+    }
+
+    public async Task<Credentials> SelectCredentials(int dumpId)
+    {
+        var id = await SelectCredentialsId(dumpId);
+        return await credentialsRepository.GetById(id);
     }
 
     public Task<SshQuery> UpdateQuery(SshQuery query)

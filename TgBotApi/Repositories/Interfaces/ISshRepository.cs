@@ -12,4 +12,6 @@ public interface ISshRepository
     Task InsertSQLDumps(string sql, int credentialsId); 
     Task<SshQuery> UpdateQuery(SshQuery query);
     Task<List<CredentialAndDatabase>> SelectAllConnections(int userId);
+    Task<string> SelectDumpSql(int dumpId);
+    Task<Credentials> SelectCredentials(int dumpId);
 }

@@ -121,9 +121,52 @@ public class SshService : ISshService
                 }
             });
             if (!string.IsNullOrEmpty(response))
-                await _sshRepository.InsertSQLDumps(response, credentials.Id);
+                await _sshRepository.InsertSQLDumps(response.Replace('\'', '"'), credentials.Id);
             return response;
 
+        }
+    }
+
+    public async Task<bool> LoadDump(int dumpId, int userId)
+    {
+        var connectionDbCred = await _sshRepository.SelectCredentials(dumpId); 
+        var cred = await _sshRepository.GetSshString(userId);
+        var pgDumpCommand = $"pg_dump -U {connectionDbCred.Database} < dump.sql";
+        var sql = await _sshRepository.SelectDumpSql(dumpId);
+
+        await File.WriteAllTextAsync("./dump.sql", sql.Replace('"', '\''));
+
+        using var connection = CreateConnection(cred) ;
+        try
+        {
+            await ExecuteCommandWithOutOutput(pgDumpCommand, connection);
+            await kafkaProducesService.WriteTraceLogAsync(new Message()
+            {
+                MessageType = "SuccessDatabaseDumpLoad",
+                Object = new DumpModel()
+                {
+                    UserId = userId,
+                    CredentialId = connectionDbCred.Id,
+                    EventDate = DateTime.Now,
+                    SQL = sql
+                }
+            });
+            return true;
+        }
+        catch (Exception ex)
+        {
+            await kafkaProducesService.WriteTraceLogAsync(new Message()
+            {
+                MessageType = "FailDatabaseDumpLoad",
+                Object = new DumpModel()
+                {
+                    UserId = userId,
+                    CredentialId = connectionDbCred.Id,
+                    EventDate = DateTime.Now,
+                    SQL = sql
+                }
+            });
+            return false;
         }
     }
 

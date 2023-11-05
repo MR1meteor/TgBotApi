@@ -14,6 +14,7 @@ public interface ISshService
     void DeleteQuery(int credentialsId, string queryName);
     Task<SshQuery> UpdateQuery(SshQuery query);
     Task<string> CreateDump(int userId, string name);
+    Task<bool> LoadDump(int dumpId, int userId);
     Task<List<CredentialAndDatabase>> GetAllConnections(int userId);
     Task<bool> CreateSshConnectionOnCredential(SshConnect connect);
 }
