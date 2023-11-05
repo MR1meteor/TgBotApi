@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Text;
 using TgBotApi.Models;
 using TgBotApi.Repositories.Interfaces;
 
@@ -167,7 +168,40 @@ namespace TgBotApi.Controllers
                 return NotFound("Credentials not found");
             }
 
-            var result = await queryRepository.Execute(request, credentials);
+            var result = await queryRepository.Execute(credentials, request.Sql);
+
+            return Ok(result);
+        }
+
+        [HttpPost("execute-template")]
+        public async Task<IActionResult> ExecuteTemplate(ExecuteTemplateRequest request)
+        {
+            var credentials = await credentialsRepository.GetByIdAndName(request.UserId, request.CredentialsName);
+
+            if (credentials == null)
+            {
+                return NotFound("Credentials not found");
+            }
+
+            var query = await queryRepository.GetByCredentialsAndName(credentials.Id, request.QueryName);
+
+            if (query == null)
+            {
+                return NotFound("Query not found");
+            }
+
+            var queryParameters = await queryParameterRepository.GetByQuery(query.Id);
+
+            var sql = query.Sql;
+
+            for (int i = 0; i < queryParameters.Count; i++)
+            {
+                sql = sql.Replace(queryParameters[i].Parameter, request.Parameters[i]);
+            }
+
+            Console.WriteLine($"Типа логи: {sql}");
+
+            var result = await queryRepository.Execute(credentials, sql);
 
             return Ok(result);
         }
