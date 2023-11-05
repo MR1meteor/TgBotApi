@@ -11,4 +11,5 @@ public interface ISshRepository
     void DeleteQuery(int queryId);
     Task InsertSQLDumps(string sql, int credentialsId); 
     Task<SshQuery> UpdateQuery(SshQuery query);
+    Task<List<CredentialAndDatabase>> SelectAllConnections(int userId);
 }
