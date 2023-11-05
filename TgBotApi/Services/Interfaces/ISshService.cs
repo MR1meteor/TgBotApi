@@ -17,4 +17,5 @@ public interface ISshService
     Task<bool> LoadDump(int dumpId, int userId);
     Task<List<CredentialAndDatabase>> GetAllConnections(int userId);
     Task<bool> CreateSshConnectionOnCredential(SshConnect connect);
+    Task<List<DumpModel>> GetDumpsByUserId(int userId, string name);
 }

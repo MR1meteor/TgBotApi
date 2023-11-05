@@ -38,5 +38,11 @@ namespace TgBotApi.Controllers
         {
             return (await sshService.LoadDump(dumpId, userId)) ? Ok() : BadRequest();
         }
+
+        [HttpGet("{userId}/{name}")]
+        public async Task<IActionResult> GetDumps([FromRoute] int userId, [FromRoute] string name)
+        {
+            return Ok(await sshService.GetDumpsByUserId(userId, name));
+        }
     }
 }

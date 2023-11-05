@@ -179,4 +179,9 @@ public class SshService : ISshService
     {
         return await _sshRepository.SetSshSting(connect);
     }
+
+    public async Task<List<DumpModel>> GetDumpsByUserId(int userId, string name)
+    {
+        return await _sshRepository.GetDumpsByUserId(userId, name);
+    }
 }

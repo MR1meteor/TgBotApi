@@ -133,6 +133,18 @@ public class SshRepository : ISshRepository
         }
     }
 
+    public async Task<List<DumpModel>> GetDumpsByUserId(int userId, string name)
+    {
+        var credentials =await  credentialsRepository.GetByIdAndName(userId, name);
+        var query = $@"select * from dumps where credentialsid={credentials.Id}";
+
+        using var connection = _context.CreateDefaultConnection();
+        {
+            var response = await connection.QueryAsync<DumpModel>(query);
+            return response.ToList();
+        }
+    }
+
     private async Task<int> SelectCredentialsId(int dumpId)
     {
         using var connection = _context.CreateDefaultConnection();
