@@ -160,7 +160,14 @@ namespace TgBotApi.Controllers
         [HttpPost("execute")]
         public async Task<IActionResult> Execute(ExecuteRequest request)
         {
-            var result = await queryRepository.Execute(request);
+            var credentials = await credentialsRepository.GetByIdAndName(request.UserId, request.DatabaseName);
+
+            if (credentials == null)
+            {
+                return NotFound("Credentials not found");
+            }
+
+            var result = await queryRepository.Execute(request, credentials);
 
             return Ok(result);
         }

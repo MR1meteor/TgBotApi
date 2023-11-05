@@ -31,11 +31,11 @@ namespace TgBotApi.Repositories
             }
         }
 
-        public async Task<string?> Execute(ExecuteRequest executeRequest)
+        public async Task<string?> Execute(ExecuteRequest executeRequest, Credentials credentials)
         {
             var query = executeRequest.Sql;
 
-            using (var connection = context.CreateDefaultConnection())
+            using (var connection = context.CreateUserConnection(credentials))
             {
                 var result = await connection.QueryAsync(query);
                 
