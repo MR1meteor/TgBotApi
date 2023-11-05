@@ -105,10 +105,13 @@ public class SshRepository : ISshRepository
     {
         using (var connection = _context.CreateDefaultConnection())
         {
-            var query = $@"insert into Dumps(sql, credentialsId) values ('{sql}', {credentialsId});";
+            Console.WriteLine(sql);
+            var query = $@"insert into Dumps(""sql"", ""credentialsId"") values ('{sql}', {credentialsId})";
             await connection.ExecuteAsync(query);
         }
     }
+    
+    // public async Task SelectAllConnections(userId)\
 
     public Task<SshQuery> UpdateQuery(SshQuery query)
     {
