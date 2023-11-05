@@ -44,14 +44,14 @@ public class SshService : ISshService
         _sshRepository.AddQuery(query);
     }
 
-    public async Task<List<SshQuery>> GetQuery(int userId)
+    public async Task<List<SshQuery>> GetQuery(int credentialsId)
     {
-        return await _sshRepository.GetQuery(userId);
+        return await _sshRepository.GetQuery(credentialsId);
     }
 
-    public void DeleteQuery(int queryId)
+    public void DeleteQuery(int credentialsId, string queryName)
     {
-        _sshRepository.DeleteQuery(queryId);
+        _sshRepository.DeleteQuery(credentialsId, queryName);
     }
 
     public async Task<SshQuery> UpdateQuery(SshQuery query)

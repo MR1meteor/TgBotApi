@@ -68,12 +68,12 @@ public class SshRepository : ISshRepository
     {
         var queryArgs = new
         {
-            CredentialId = query.UserId,
+            CredentialId = query.CredentialId,
             Query = query.Query,
             QueryName = query.QueryName,
         };
 
-        var queryInsert = $@"INSERT INTO {TABLE_SSH_QUERYS}(""CredentialId"", ""Query"", ""QueryName"") VALUES(@CredentialId, @Query, @QueryName)";
+        var queryInsert = $@"INSERT INTO {TABLE_SSH_QUERYS}(""CredentialId"", ""Query"", ""QueryName"") VALUES(@credentialId, @query, @queryName)";
 
         using (var connection = _context.CreateDefaultConnection())
         {
@@ -81,11 +81,11 @@ public class SshRepository : ISshRepository
         }
     }
 
-    public async Task<List<SshQuery>> GetQuery(int userId)
+    public async Task<List<SshQuery>> GetQuery(int credentialsId)
     {
-        var query = $@"select * from {TABLE_SSH_QUERYS} where ""CredentialId"" = @userId";
+        var query = $@"select * from {TABLE_SSH_QUERYS} where ""CredentialId"" = @credentialsId";
 
-        var queryArgs = new { UserId = userId };
+        var queryArgs = new { CredentialsId = credentialsId };
 
         using (var connection = _context.CreateDefaultConnection())
         {
@@ -96,9 +96,16 @@ public class SshRepository : ISshRepository
         throw new NotImplementedException();
     }
 
-    public void DeleteQuery(int queryId)
+    public async Task DeleteQuery(int credentialsId, string queryName)
     {
-        throw new NotImplementedException();
+        var query = $@"delete from {TABLE_SSH_QUERYS} where ""CredentialId"" = @credentialId and ""QueryName"" = @queryName";
+
+        var queryArgs = new { CredentialId = credentialsId, QueryName = queryName };
+
+        using (var connection = _context.CreateDefaultConnection())
+        {
+            await connection.QueryAsync(query, queryArgs);
+        }
     }
 
     public async Task InsertSQLDumps(string sql, int credentialsId)

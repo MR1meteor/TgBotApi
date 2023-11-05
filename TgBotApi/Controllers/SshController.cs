@@ -40,29 +40,71 @@ public class SshController : ControllerBase
     }
     
     [HttpPost("add-query")]
-    public async Task<IActionResult> AddQuery([FromBody] SshQuery query)
+    public async Task<IActionResult> AddQuery([FromBody] SshQueryDto queryDto)
     {
+        var credentials = await credentialsRepository.GetByIdAndName(queryDto.UserId, queryDto.DatabaseName);
+
+        if (credentials == null)
+        {
+            return NotFound("Credentials not found");
+        }
+
+        var query = new SshQuery
+        {
+            Query = queryDto.Query,
+            QueryName = queryDto.QueryName,
+            CredentialId = credentials.Id
+        };
+
         _sshService.AddQuery(query);
         return Ok();
     }
     
-    [HttpGet("get-query/{userId}")]
-    public async Task<IActionResult> GetQuery([FromRoute] int userId)
+    [HttpGet("get-query/{userId}/{databaseName}")]
+    public async Task<IActionResult> GetQuery([FromRoute] long userId, [FromRoute] string databaseName)
     {
-        var result = await _sshService.GetQuery(userId);
+        var credentials = await credentialsRepository.GetByIdAndName(userId, databaseName);
+
+        if (credentials == null)
+        {
+            return NotFound("Credentials not found");
+        }
+
+        var result = await _sshService.GetQuery(credentials.Id);
         return Ok(result);
     }
     
-    [HttpDelete("delete-query/{queryId}")]
-    public async Task<IActionResult> DeleteQuery([FromRoute] int queryId)
+    [HttpDelete("delete-query/{userId:long}/{databaseName}/{queryName}")]
+    public async Task<IActionResult> DeleteQuery([FromRoute] long userId, [FromRoute] string databaseName, [FromRoute] string queryName)
     {
-        _sshService.DeleteQuery(queryId);
+        var credentials = await credentialsRepository.GetByIdAndName(userId, databaseName);
+
+        if (credentials == null)
+        {
+            return NotFound("Credentials not found");
+        }
+
+        _sshService.DeleteQuery(credentials.Id, queryName);
         return Ok();
     }
     
     [HttpPut("update-query")]
-    public async Task<IActionResult> UpdateQuery([FromBody] SshQuery query)
+    public async Task<IActionResult> UpdateQuery([FromBody] SshQueryDto queryDto)
     {
+        var credentials = await credentialsRepository.GetByIdAndName(queryDto.UserId, queryDto.DatabaseName);
+
+        if (credentials == null)
+        {
+            return NotFound("Credentials not found");
+        }
+
+        var query = new SshQuery
+        {
+            Query = queryDto.Query,
+            QueryName = queryDto.QueryName,
+            CredentialId = credentials.Id
+        };
+
         var result = await _sshService.UpdateQuery(query);
         return Ok(result);
     }

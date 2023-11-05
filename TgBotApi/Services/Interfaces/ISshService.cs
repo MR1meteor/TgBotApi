@@ -10,8 +10,8 @@ public interface ISshService
     Task<string> Lsof(int userId);
     Task<string> Tcpdump(int userId);
     void AddQuery(SshQuery query);
-    Task<List<SshQuery>> GetQuery(int userId);
-    void DeleteQuery(int queryId);
+    Task<List<SshQuery>> GetQuery(int credentialsId);
+    void DeleteQuery(int credentialsId, string queryName);
     Task<SshQuery> UpdateQuery(SshQuery query);
     Task<string> CreateDump(int userId, string name);
     Task<List<CredentialAndDatabase>> GetAllConnections(int userId);
