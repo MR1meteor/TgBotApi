@@ -194,4 +194,9 @@ public class SshService : ISshService
     {
         return await _sshRepository.Execute(connect, query);
     }
+
+    public async Task<SshQuery?> GetQueryByCreds(int credentialsId, string queryName)
+    {
+        return await _sshRepository.GetQueryByCredentials(credentialsId, queryName);
+    }
 }

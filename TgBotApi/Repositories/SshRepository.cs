@@ -186,6 +186,19 @@ public class SshRepository : ISshRepository
         throw new NotImplementedException();
     }
 
+    public async Task<SshQuery?> GetQueryByCredentials(int credentialsId, string queryName)
+    {
+        var query = $@"select * from {TABLE_SSH_QUERYS} where ""CredentialId"" = @credentialsId and ""QueryName"" = @queryName";
+
+        var queryArgs = new { CredentialsId = credentialsId, QueryName = queryName };
+
+        using (var connection = _context.CreateDefaultConnection())
+        {
+            var res = await connection.QueryAsync<SshQuery>(query, queryArgs);
+            return res?.FirstOrDefault();
+        }
+    }
+
     public async Task<ExecuteResponse> Execute(SshConnect connect, string query)
     {
         try

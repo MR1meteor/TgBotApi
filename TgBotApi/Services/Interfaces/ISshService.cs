@@ -20,4 +20,5 @@ public interface ISshService
     Task<SshConnect?> GetSshConnection(int credentialsId);
     Task<List<DumpModel>> GetDumpsByUserId(int userId, string name);
     Task<ExecuteResponse> Execute(SshConnect connect, string query);
+    Task<SshQuery?> GetQueryByCreds(int credentialsId, string queryName);
 }
