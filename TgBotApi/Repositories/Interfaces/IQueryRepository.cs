@@ -8,6 +8,6 @@ namespace TgBotApi.Repositories.Interfaces
         Task<CustomQuery?> GetByCredentialsAndName(int credentialsId, string name);
         Task<List<CustomQuery>> GetByCredentials(int credentialsId);
         Task<CustomQuery?> Add(CustomQuery customQuery);
-        Task<string?> Execute(ExecuteRequest executeRequest);
+        Task<string?> Execute(ExecuteRequest executeRequest, Credentials credentials);
     }
 }
