@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TgBotApi.Models;
+using TgBotApi.Repositories.Interfaces;
 using TgBotApi.Services.Interfaces;
 
 namespace TgBotApi.Controllers;
@@ -9,10 +10,12 @@ namespace TgBotApi.Controllers;
 public class SshController : ControllerBase
 {
     private readonly ISshService _sshService;
+    private readonly ICredentialsRepository credentialsRepository;
 
-    public SshController(ISshService sshService)
+    public SshController(ISshService sshService, ICredentialsRepository credentialsRepository)
     {
         _sshService = sshService;
+        this.credentialsRepository = credentialsRepository;
     }
     
     [HttpGet("check-disk-space/{userId}")]
@@ -65,8 +68,24 @@ public class SshController : ControllerBase
     }
 
     [HttpPost("new-connection")]
-    public async Task<IActionResult> CreateConnection(SshConnect connect)
+    public async Task<IActionResult> CreateConnection(AddSshConnectionDbo request)
     {
+        var credentials = await credentialsRepository.GetByIdAndName(request.UserId, request.DatabaseName);
+
+        if (credentials == null)
+        {
+            return NotFound("Credentials not found");
+        }
+
+        var connect = new SshConnect
+        {
+            Ip = request.Ip,
+            Port = request.Port,
+            Username = request.Username,
+            Password = request.Password,
+            CredentialId = credentials.Id
+        };
+
         return Ok(await _sshService.CreateSshConnectionOnCredential(connect));
     }
 }
