@@ -69,4 +69,10 @@ public class SshController : ControllerBase
     {
         return Ok(await _sshService.CreateSshConnectionOnCredential(connect));
     }
+
+    [HttpGet("all-connections/{userId}")]
+    public async Task<IActionResult> GetAllConnections([FromRoute] int userId)
+    {
+        return Ok(await _sshService.GetAllConnections(userId));
+    }
 }

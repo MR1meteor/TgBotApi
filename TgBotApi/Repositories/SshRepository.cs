@@ -110,8 +110,18 @@ public class SshRepository : ISshRepository
             await connection.ExecuteAsync(query);
         }
     }
-    
-    // public async Task SelectAllConnections(userId)\
+
+    public async Task<List<CredentialAndDatabase>> SelectAllConnections(int userId)
+    {
+        var query =
+            @$"select ""CredentialId"", c.""Database"" from ssh_servers s join ""credentials"" ""c"" on s.""CredentialId"" = c.""Id"" where c.""UserId"" = {userId}";
+        
+            using var connection = _context.CreateDefaultConnection();
+            {
+                var pair = (await connection.QueryAsync<CredentialAndDatabase>(query)).ToList();
+                return pair;
+            }
+    }
 
     public Task<SshQuery> UpdateQuery(SshQuery query)
     {

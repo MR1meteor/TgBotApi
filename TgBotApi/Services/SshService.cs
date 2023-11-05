@@ -127,6 +127,11 @@ public class SshService : ISshService
         }
     }
 
+    public async Task<List<CredentialAndDatabase>> GetAllConnections(int userId)
+    {
+        return await _sshRepository.SelectAllConnections(userId);
+    }
+
     public async Task<bool> CreateSshConnectionOnCredential(SshConnect connect)
     {
         return await _sshRepository.SetSshSting(connect);
