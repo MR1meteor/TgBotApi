@@ -31,7 +31,8 @@ create table if not exists queries
     "CredentialsId" integer
         constraint "queries_credentials_Id_fk"
             references credentials,
-    "Sql"          varchar
+    "Sql"          varchar,
+    "Name"         varchar
 );
 
 create table if not exists "query_parameters"

@@ -5,5 +5,6 @@
         public int Id { get; set; }
         public int CredentialsId { get; set; }
         public string Sql { get; set; }
+        public string Name { get; set; }
     }
 }

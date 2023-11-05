@@ -2,7 +2,9 @@
 {
     public class QueryParameterDto
     {
-        public int QueryId { get; set; }
+        public long UserId { get; set; }
+        public string DatabaseName { get; set; }
+        public string QueryName { get; set; }
         public string Parameter { get; set; } = string.Empty;
     }
 }

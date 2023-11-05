@@ -43,6 +43,8 @@ builder.Services.AddScoped<IMemoryRepository, MemoryRepository>();
 builder.Services.AddScoped<IVacuumRepository, VacuumRepository>();
 builder.Services.AddScoped<ILinkRepository, LinkRepository>();
 builder.Services.AddScoped<ILinkService, LinkService>();
+builder.Services.AddScoped<IQueryRepository, QueryRepository>();
+builder.Services.AddScoped<IQueryParameterRepository, QueryParameterRepository>();
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddScoped<ISshService, SshService>();
 builder.Services.AddScoped<ISshRepository, SshRepository>();
